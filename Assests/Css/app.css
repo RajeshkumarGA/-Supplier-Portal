@@ -1,0 +1,447 @@
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
+body {
+	background-color:#fafbfc;
+}
+.navbar-custom {
+    border-top: none;
+    color:black;
+	background-color:#294874;
+    opacity: 1;
+}
+.nav-content{
+	font-family: 'Lato', sans-serif;
+	font-size:14px;
+	color:#ffffff;
+	letter-spacing:0;
+	text-align:left;
+}
+.navbar-custom-admin {
+    border-top: none;
+    color:black;
+	background-color:#fff;
+    opacity: 1;
+}
+
+.nav-content-admin{
+	font-family: 'Lato', sans-serif;
+	font-size:14px;
+	color:black;
+	letter-spacing:0;
+	text-align:left;
+}
+ul.nav a:hover { 
+	color:#00aaff !important;
+    background-color:#294874 !important;
+    border-bottom: 4px solid #00aaff; 
+}
+ul.nav a:focus { 
+	color:#00aaff !important;
+    background-color:#294874 !important;
+    border-bottom: 4px solid #00aaff; 
+}
+ul.nav a:target{
+	color:#00aaff !important;
+    background-color:#294874 !important;
+    border-bottom: 4px solid #00aaff; 
+}
+.navbar-brand{
+	background:#294874;
+}
+.loginFields{
+	margin-top:0%;
+	height: 70px;
+}
+.btn-primary{
+	width:100%;
+	background-color: black; 
+}
+
+input[type=checkbox]{
+	margin-right: 2%;
+}
+label{
+	width: 90%;
+}
+section{
+	padding: 4%;
+}
+.social img{
+	/*transition-property: transform;*/
+	transition-duration: .5s;
+
+}
+.social img:hover{
+	-ms-transform: rotate(360deg); /* IE 9 */
+    -webkit-transform: rotate(360deg); /* Chrome, Safari, Opera */
+    transform: rotate(360deg);
+}
+.form-control{
+	width:90%;
+}
+.form-control + span{
+	display: table-cell;
+}
+tr:nth-child(even){
+	background-color: #e4e4e4;
+	padding: 10px;
+}
+tr {
+	text-align: center;
+}
+
+.table-bordered{
+	border: 1px solid black;
+}
+.table-responsive{
+	margin-top:6%;
+	width: 100%;
+}
+.postatus{
+	border:1px solid black;
+	padding: 3%;
+	border-radius: 2px;
+
+}
+.postatus:hover{
+	background-color:white; 
+	
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+	padding: 4px;
+}
+
+.center {
+    text-align: center;
+}
+
+.pagination {
+    display: inline-block;
+    margin-top: 0px;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #e4e4e4;
+    background-color: white; 
+}
+.pagination input {
+    color: black;
+    float: left;
+    padding: 6px 15px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #e4e4e4;
+    background-color: white; 
+    width: 120px;
+}
+.pagination li.active{
+	background-color: red;
+}
+.pagination a.active {
+    background-color: black;
+    color: white;
+    border: 1px solid #337ab7;
+}
+
+.nav-justified>li:first-child{
+	background-color:black; 
+}
+.nav-justified>li:first-child>a{
+	color:white; 
+}
+.nav-justified>li:first-child>a:hover{
+	background-color:black; 
+}
+.disabled {
+  cursor: not-allowed;
+}
+.search { position: relative; }
+.search input { text-indent: 18px;}
+.search .fa-search { 
+  position: absolute;
+  top: 10px;
+  left: 7px;
+  font-size: 15px;
+}
+
+.tableHeight{
+	height: 350px;
+}
+.myGrid {
+    width:100%;
+    height:400px;
+    font-family:'Lato', sans-serif;
+	font-size:14px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:left;
+  }
+  .InActive .ui-grid-cell{
+  background-color: #c7c00d !important;
+  border: .5px solid #e4e4e4;
+}
+
+.myGridDashboard {
+    width:100%;
+    height:250px;
+    font-family:'Lato', sans-serif;
+	font-size:14px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:left;
+  }
+.Active .ui-grid-cell{
+  background-color: #e4e4e4 !important;
+  border: .5px solid white;
+}
+@media only screen and (min-width:100px) and (max-width: 320px){
+	.loginForm{
+		background-color: #e4e4e4; 
+		padding: 3%;
+		margin-top: 20%;
+	}
+	
+} 
+
+@media only screen and (min-width:320px) and (max-width: 480px){
+	.loginForm{
+		background-color: #e4e4e4;
+		padding: 3%; 
+		margin-top: 20%;
+	}
+	td, th{
+		text-align: center;
+		padding: 4px;
+		width: 400px;
+	}
+	.barChart{
+		width:300px;
+		height:150px;
+	}
+	
+} 
+
+@media only screen and (min-width:480px) and (max-width: 720px){
+	
+	.loginForm{
+		background-color: #e4e4e4;
+		padding: 3%; 
+	}
+	td, th{
+		text-align: center;
+		padding: 4px;
+		width: 350px;
+	}
+	.barChart{
+		width:400px;
+		height:200px;
+	}
+
+} 
+@media only screen and (min-width:720px) {
+	
+	.loginForm{
+		background-color: #e4e4e4; 
+		padding: 3%;
+	}
+	.selectColumn{
+		width: 100%;
+	    height: 200px;
+	    overflow-y: scroll;
+	    background-color: aliceblue;
+	    margin: 0%;
+	    padding: 12%;
+	    position: absolute;
+	    z-index: 1;
+	    padding: 4%;
+	    background: antiquewhite;
+	    box-shadow: 3px 4px 17px 3px black;
+	    margin: 2%;
+	}
+	.floatRight{
+		float: right;
+	}
+	td, th{
+		text-align: center;
+		padding: 4px;
+		width: 250px;
+	}
+	.barChart{
+		width:600px;
+		height:300px;
+	}
+		
+
+} 
+.chartheader{
+  font-family: 'Lato', sans-serif;
+  font-size:18px;
+  color:#ffffff;
+  letter-spacing:0;
+  text-align:center;
+  margin-top: 20px;
+}
+ 
+
+
+/*Sign up css*/
+.Register-New-User{
+  width: 270px;
+  height: 36px;
+  font-family: 'Lato', sans-serif;
+  font-size: 32px;
+  text-align: left;
+  color: #1e1e1e;
+}
+.YOUR-PERSONAL-INFO {
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+  color: #9b9b9b;
+
+}
+
+.Name-Style {
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  text-align: left;
+  color: #8b8b8b;
+}
+
+.chart-legend li span{
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+}
+
+.pielegend{
+	margin-top:-35%;
+	margin-left:42%;
+	color:#fff;
+}
+/*Landing page Styles*/
+.Welcome_to_the_EP_Minerals{
+	font-family: 'Lato', sans-serif;
+	font-size:36px;
+	color:#ffffff;
+	letter-spacing:0;
+	line-height:46px;
+	text-align:left;
+} 
+.landing_page_text{
+	font-family: 'Lato', sans-serif;
+	font-size:16px;
+	color:#ffffff;
+	letter-spacing:0;
+	line-height:26px;
+	text-align:left;
+}
+.checkbox-text{
+	font-family: 'Lato', sans-serif;
+	font-size:18px;
+	color:#ffffff;
+	letter-spacing:0;
+	text-align:left;
+}
+.page-header{
+	font-family: 'Lato', sans-serif;
+	font-size:16px;
+	color:#00aaff;
+	letter-spacing:0;
+	line-height:28px;
+	text-align:left;
+}
+.Supply_Management_heading { 
+    font-family: 'Lato', sans-serif;
+	font-size:32px;
+	color:#00aaff;
+	letter-spacing:0;
+	text-align:center;
+} 
+.Supply_Management_sub_heading{
+	font-family: 'Lato', sans-serif;
+	font-size:14px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:center;
+}
+.Supply_Management_cnt_hed{
+	font-family: 'Lato', sans-serif;
+	font-size:24px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:left;
+}
+.Supply_Management_cnt{
+	font-family: 'Lato', sans-serif;
+	font-size:14px;
+	color:#969696;
+	letter-spacing:0;
+	line-height:24px;
+	text-align:left;
+}
+.Do_better_heading{
+	font-family: 'Lato', sans-serif;
+	font-size:32px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:center;
+}
+
+.btn-hide
+{
+    position: relative;
+    font-family:'Lato', sans-serif;
+	font-size:14px;
+	letter-spacing:0;
+	border:none;
+	background:none;
+	float:right;
+	margin-right:5%;
+}
+
+.ui-grid .ui-grid-render-container-body .ui-grid-viewport {
+  overflow-x: auto !important;
+}
+
+.filter_style{
+	font-family:'Lato', sans-serif;
+	font-size:14px;
+	color:#4a4a4a;
+	letter-spacing:0;
+}
+.Create-Filter-Modal-Title{
+	font-family:'Lato-Bold',sans-serif;
+	font-size:18.9px;
+	color:#294874;
+	letter-spacing:0;
+}
+
+.popupCard{
+	
+	background:#f2f3f8;
+	border:1px solid #e7e9f0;
+	border-radius:2.1px;
+	width:224.9px;
+	height:248.9px;
+}
+.popupCardHeader{
+	font-family:'Lato-Medium',sans-serif;
+	font-size:14px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:left;
+}
+.popupCardHeaderSub{
+	font-family:'Lato-Regular',sans-serif;
+	font-size:9px;
+	color:#969696;
+	letter-spacing:0;
+	text-align:left;
+}
