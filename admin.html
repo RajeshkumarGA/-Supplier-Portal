@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html ng-app="khagaAdmin" ng-controller="adminController">
+<head>
+	<title>EP Minerals Admin</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="Assests/Css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="Assests/Css/maxcdn-bootstrapcdn-bootstrap-min.css">
+	<link rel="stylesheet" type="text/css" href="Assests/Css/app.css">
+	<link rel="stylesheet" type="text/css" href="Assests/Css/testimonial.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+  
+</head>
+<body style="background-color:#F1F1F2;" >
+	<nav class="navbar navbar-defaul navbar-custom navbar-fixed-top">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>                        
+	      </button>
+	      <a class="navbar-brand" href="" style="background-color:#00aaff;color: white;margin-left:5%;margin-right: -5%;">EP Minerals</a>
+	    </div>
+	    <div class="collapse navbar-collapse" id="myNavbar">
+	      <ul class="nav navbar-nav nav-col">
+	        <li><a href="#!/" class="nav-content">Home</a></li>
+	        <li><a href="#!/AppConfiguration" class="nav-content">App Configuration</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right" ng-show='loggedIn'>
+	      	<li><a href="" class="nav-content"><span class="glyphicon glyphicon-envelope"></a></li>
+	        <li class="dropdown" class="">
+	          <a class="dropdown-toggle" data-toggle="dropdown" >{{userName}}<span class="caret"></span></a>
+	          <ul class="dropdown-menu">
+	            <li><a href="">Edit Profile</a></li>
+	            <li><a href="">Logout</a></li>
+	          </ul>
+	        </li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+	<div ng-view></div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/lodash/4.6.1/lodash.js"></script>
+<script type="text/javascript" src="Assests/Js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="Assests/Js/maxcdn-bootstrapcdn-bootstrap.min.js"></script>
+<script type="text/javascript" src="Assests/Js/ajax-googleapis-com-jquery.min.js"></script>
+<script type="text/javascript" src="Assests/Js/bootstrap.min.js"></script>
+<script type="text/javascript" src="Assests/Js/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap-tpls.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.min.js"></script>
+<script type="text/javascript" src="Controllers/module.js"></script>
+<script type="text/javascript" src="Services/route.js"></script>
+<script type="text/javascript" src="Controllers/adminController.js"></script>
+<script type="text/javascript" src="Controllers/adminHomeController.js"></script>
+<script type="text/javascript" src="Controllers/AppConfiguration.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular-cookies.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script>
+<script src="http://ui-grid.info/release/ui-grid.js"></script>
+
+	
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->

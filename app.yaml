@@ -1,0 +1,64 @@
+application: testbuildKhaga
+version: 1
+runtime: php55
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+
+- url: /css
+  static_dir: css
+
+- url: /apicalls
+  static_dir: apicalls
+
+- url: /controller
+  static_dir: controller
+
+- url: /Assests
+  static_dir: Assests
+
+- url: /img
+  static_dir: img
+
+- url: /pug
+  static_dir: pug
+
+- url: /scss
+  static_dir: sass
+
+- url: /services
+  static_dir: services
+
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /vendor
+  static_dir: vendor
+
+- url: /Views
+  static_dir: Views
+
+- url: /js
+  static_dir: js
+
+- url: /index
+  script: index.html
+
+- url: /home.html
+  script: home.html
+
+- url: /signup.html
+  script: signup.html
+
+- url: /supplier.html
+  script: supplier.html
+
+
+
+
+
