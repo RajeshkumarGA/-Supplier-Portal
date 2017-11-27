@@ -1,0 +1,273 @@
+<section ng-controller="AppConfigurationController">
+	<div class="container" style="margin-top:5%;" >	
+		<h4 style="margin-top:-5%;font-family: 'Lato', sans-serif;">App Configuration</h4>
+		<div style="font-family: 'Lato', sans-serif;font-size:12px;color:#9b9b9b;letter-spacing:0.2px;text-align:left;">
+			<div class="col-md-12 col-lg-12">
+				<p> CONNECTION <span style="color:black;cursor:pointer" class="glyphicon glyphicon-pencil" data-toggle='modal' data-target='#CONNECTION'></span></p>
+				<div class="col-md-4 col-lg-4">
+					<label>Description</label>
+	  				<p style="color:black;">PROD</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>IFS Server URL</label>
+	  				<p style="color:black;">http://ifsapp09:8800</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20%;">
+					<label>IFS User Name</label>
+	  				<p style="color:black;">eagle4</p>
+				</div>
+				<div class="col-md-4 col-lg-4">
+					<label>IFS User Password</label>
+	  				<p style="color:black;">********</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>Status</label>
+	  				<p style="color:black;">Active</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20% ">
+					<label>Notes</label>
+	  				<p style="color:black;">Please maintain a steady connection.</p>
+				</div>
+			</div>
+
+			<div class="col-md-12 col-lg-12">
+				<p> NOTIFICATION <span style="color:black;cursor:pointer" class="glyphicon glyphicon-pencil" data-toggle='modal' data-target='#NOTIFICATION'></span></p>
+				<div class="col-md-4 col-lg-4">
+					<label>SMTP HOST</label>
+	  				<p style="color:black;">smtp.gmail.com</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>SMTP PORT</label>
+	  				<p style="color:black;">587</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20%;">
+					<label>SMTP AUTH</label>
+	  				<p style="color:black;">Enabled</p>
+				</div>
+				<div class="col-md-4 col-lg-4">
+					<label>User Name</label>
+	  				<p style="color:black;">khagaportal@gmail.com</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>Password</label>
+	  				<p style="color:black;">********</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20% ">
+					<label>Email ID</label>
+	  				<p style="color:black;">Khagaportal@gmail.com</p>
+				</div>
+				<div class="col-md-4 col-lg-4">
+					<label>Status</label>
+	  				<p style="color:black;">Active</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>Notes</label>
+	  				<p style="color:black;">_</p>
+				</div>
+			</div>
+
+			<div class="col-md-12 col-lg-12">
+				<p>COMPANY PROFILE<span style="color:black;cursor:pointer" class="glyphicon glyphicon-pencil" data-toggle='modal' data-target='#COMPANYPROFILE'></span></p>
+				<div class="col-md-4 col-lg-4">
+					<label>Company Name</label>
+	  				<p style="color:black;">EP Minerals</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>Company ID</label>
+	  				<p style="color:black;">EP</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20%;">
+					<label>Email ID</label>
+	  				<p style="color:black;">accounts.payable@epminerals.com</p>
+				</div>
+				<div class="col-md-4 col-lg-4">
+					<label>Fax</label>
+	  				<p style="color:black;">787-393-8920</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>Phone No.</label>
+	  				<p style="color:black;">787-393-8920</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20% ">
+					<label>Web Link</label>
+	  				<p style="color:black;">Khagaportal@gmail.com</p>
+				</div>
+				<div class="col-md-4 col-lg-4">
+					<label>Facebook Link</label>
+	  				<p style="color:black;">htttps://facebook.com/EPMinerals</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;">
+					<label>Twitter Link</label>
+	  				<p style="color:black;">https://twitter.com/EPMinerals</p>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-20% ">
+					<label>Image Link</label>
+	  				<p style="color:black;">https://87.78.120:8085/content/images/logo.jpg</p>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<div id="CONNECTION" class="modal fade" role="dialog">
+  		<div class="modal-dialog"  style="width:800px;">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Edit Connection Settings</h4>
+  				</div>
+  				<div class="modal-body" style="padding-bottom:35%;font-family: 'Lato', sans-serif;color:#9b9b9b;font-size:14px;letter-spacing:0;text-align:left;">
+  					<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Description</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Description" class="form-control input-sm" style="height:35px;">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>IFS Server URL</label>
+	  							<input type="text" name="LastName" placeholder="Enter IFS Server URL" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>IFS User Name</label>
+	  							<input type="text" name="FirstName" placeholder="Enter IFS User Name" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>IFS User Password</label>
+	  							<input type="text" name="LastName" placeholder="Enter IFS User Password" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-12 col-md-12">
+	  							<label>Notes</label>
+	  							<input type="text" name="LastName" placeholder="Enter address" class="form-control input-sm" style="height:35px">
+	  				        </div>
+	  				        <div class="col-lg-6 col-md-6">
+	  							<label>Status</label>
+	  							<button style="width:150px">Active</button>
+			                    <button style="width:150px">Inactive</button>
+	  						</div>
+	  					</div>
+	  					
+  					</form>	
+  				</div>
+  				<div class="modal-footer">
+  					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;">Apply Filter</button>
+  					<button style="background-color:black;color:#fff;float:left;border:none;border-radius:2px;width:100px;height:35px;">Reset</button>	
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+
+  	<div id="NOTIFICATION" class="modal fade" role="dialog">
+  		<div class="modal-dialog"  style="width:800px;">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Edit Notification Settings</h4>
+  				</div>
+  				<div class="modal-body" style="padding-bottom:45%;font-family: 'Lato', sans-serif;color:#9b9b9b;font-size:14px;letter-spacing:0;text-align:left;">
+  					<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>SMTP HOST</label>
+	  							<input type="text" name="FirstName" placeholder="Enter SMTP HOST" class="form-control input-sm" style="height:35px;">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>SMTP PORT</label>
+	  							<input type="text" name="LastName" placeholder="Enter SMTP PORT" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>SMTP AUTH</label>
+	  							<input type="text" name="FirstName" placeholder="Enter SMTP AUTH" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>User Name</label>
+	  							<input type="text" name="LastName" placeholder="Enter User Name" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Password</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Password" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Email ID</label>
+	  							<input type="text" name="LastName" placeholder="Enter Email ID" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-12 col-md-12">
+	  							<label>Notes</label>
+	  							<input type="text" name="LastName" placeholder="Enter address" class="form-control input-sm" style="height:35px">
+	  				        </div>
+	  				        <div class="col-lg-6 col-md-6">
+	  							<label>Status</label>
+	  							<button style="width:150px">Active</button>
+			                    <button style="width:150px">Inactive</button>
+	  						</div>
+	  					</div>
+	  					
+  					</form>	
+  				</div>
+  				<div class="modal-footer">
+  					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;">Apply Filter</button>
+  					<button style="background-color:black;color:#fff;float:left;border:none;border-radius:2px;width:100px;height:35px;">Reset</button>	
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+
+  	<div id="COMPANYPROFILE" class="modal fade" role="dialog">
+  		<div class="modal-dialog"  style="width:800px;">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Edit Company Profile Settings</h4>
+  				</div>
+  				<div class="modal-body" style="padding-bottom:45%;font-family: 'Lato', sans-serif;color:#9b9b9b;font-size:14px;letter-spacing:0;text-align:left;">
+  					<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Company Name</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Company Name" class="form-control input-sm" style="height:35px;">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Company ID</label>
+	  							<input type="text" name="LastName" placeholder="Enter Company ID" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Email ID</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Email ID" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Fax</label>
+	  							<input type="text" name="LastName" placeholder="Enter Fax" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Phone No</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Phone No." class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Web Link</label>
+	  							<input type="text" name="LastName" placeholder="Enter Web Link" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Facebook Link</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Facebook Link" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Twitter Link</label>
+	  							<input type="text" name="LastName" placeholder="Enter Twitter Link" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-12 col-md-12">
+	  							<label>Image Link</label>
+	  							<input type="text" name="LastName" placeholder="Enter Image Link" class="form-control input-sm" style="height:35px">
+	  				        </div>
+	  					</div>
+	  					
+  					</form>	
+  				</div>
+  				<div class="modal-footer">
+  					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;">Apply Filter</button>
+  					<button style="background-color:black;color:#fff;float:left;border:none;border-radius:2px;width:100px;height:35px;">Reset</button>	
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+</section>

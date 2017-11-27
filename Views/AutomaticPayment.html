@@ -1,0 +1,169 @@
+  <link rel="styleSheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.css"/>
+  <section ng-controller="AutomaticPaymentController" style="background-color: #fafbfc;">
+  	<div class="controller">
+		  	<div class="row">
+          <div class="col-lg-2">
+  			  	<select class="btn btn-primary" ng-change='viewChange(viewCount)' ng-model='viewCount' ng-init='viewCount=1'>
+              <option ng-value='0'>Payments</option>
+              <option ng-value='1'>Automatic Payments</option>
+              <option ng-value='2'>Check Payments</option>
+            </select>
+          </div>
+			  	<div class="col-lg-2" style="margin-top:1%;float:right;">
+			  	     <button ng-click="toggle = !toggle" class="btn-hide">
+          					<span ng-show ="toggle" class="glyphicon glyphicon-eye-close" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
+          					<span ng-show ="!toggle" class="glyphicon glyphicon-eye-open" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
+          					{{toggleText}}
+        			</button>
+			  	</div>
+		  	</div>	    
+  			<div ng-show ="toggle" class="row" style="display:table;width:100%;background-color:#294874;opacity:0.5;margin-left:.2%" data-ng-init="renderCharts()">
+  				<div class="col-lg-3 col-md-3 col-sm-12">
+  					<div class="chartheader">
+  						Supplier Payment by Status
+  					</div>
+  					<div  style="height:110px;width:110px;margin-top:4%;margin-left:0%;display: inline-block;">
+  						<canvas id="myPieChart"></canvas>
+  					</div>
+  					<div class="pielegend">
+  							<p><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f8e71c" /></svg>{{PieActivePer}}% ACTIVE [{{PieActive}}]</p>
+  							<p><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f5a800" /></svg>{{PieClosedPer}}% CLOSED [{{PieClosed}}]</p>
+  							<p><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#bd10e0" /></svg>{{PieCancelledPer}}% CURRENT [{{PieCancelled}}]</p>
+  					</div>
+  				</div>
+  				<div class="col-lg-9 col-md-6 col-sm-12" >
+  					<div class="chartheader">
+  						Month Over Month Distribution - 2017
+  					</div>
+  					<div class="" >
+  						<canvas id="myBarChart"></canvas>
+  					</div>
+  					<div id="js-legend" class="chart-legend"></div>
+
+  				</div>	
+  		
+  		</div>
+  	</div>
+  		
+  		<div style="background-color: #fafbfc;margin:auto;">
+  			<div class="row">
+  			<div class="col-md-4 col-lg-4 col-sm-12 ">
+  				<ul class="pagination">
+  					<li><a disabled class="filter_style" style="color:#4a4a4a;">Payment Status : </a></li>
+  					<li id="POSTATUS_0" class="active" style="width:40px;"><a ng-click="filter(0)" class="filter_style">All</a></li>
+  					<li id="POSTATUS_1" class="" style="width:40px;"><a ng-click="filter(1)" class="filter_style">Cashed</a></li>
+  					<li id="POSTATUS_2" class="" style="width:40px;"><a class="filter_style" ng-click="filter(2)">Printed</a></li>
+  					<!-- <li id="POSTATUS_3" class="" style="width:30px;"><a class="filter_style" ng-click="filter(3)">Current</a></li> -->
+  				</ul>
+  			</div>
+  			<div class="col-md-4 col-lg-4 col-sm-12">
+  				<ul class="pagination">
+  					<li style="border-color:none;background-color:#fafbfc;color:#4a4a4a;"><a disabled class="filter_style" >Between</a></li>
+  					<li id="POSTATUS_1" class="" style="width:30px;"><input class="filter_style" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" placeholder="From Date" ng-change="selectdate()" ng-model="fromdatesearch"></li>
+  					<li id="POSTATUS_2" class="" style="width:30px;"><input class="filter_style"  type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" placeholder="End Date" ng-change="selectdate()" ng-model="enddatesearch"></li>
+  				</ul>
+  			</div>
+  			<div class="col-md-3 col-lg-3 col-sm-12" style="margin-left: -6%;">
+  				<ul class="pagination">
+  				<li style="padding:0px">
+  					<a data-toggle='modal' data-target='#CreateFilter' class="btn btn-default" style="border:none;background-color: #fafbfc;font-family: 'Lato', sans-serif;font-size:13px;color:#4a4a4a;letter-spacing:0;"><span class="glyphicon glyphicon-tasks"></span> Create Filter</a>
+  				</li>
+  				<li style="padding:0px">
+  					<span class="glyphicon glyphicon-download-alt" style="border:none;background:none;display:inline;"></span>
+             <select style="display:inline;width:50%;margin-right:-5%;margin-top:2%;" ng-init="exports.value=0" ng-options="exports.id as exports.name for exports in exportArray" ng-model="exports.value" ng-change="update(exports.value)"></select>
+  				</li>
+  				</ul>
+  			</div>
+  			<div class="col-md-2 col-lg-2 col-sm-12" style="margin-right:-5%;">
+  				<ul class="pagination">
+  				<li style="padding:0px">
+  					<a data-toggle='modal' data-target='#hideColumnModal' class="btn btn-default" style="border:none;background-color: #fafbfc;font-family: 'Lato', sans-serif;font-size:13px;color:#4a4a4a;letter-spacing:0;">Hide/Unhide Columns <span class="glyphicon glyphicon-chevron-down"></span></a>
+  				</li>
+  				</ul>
+  			</div>
+  			
+  			<div class="col-lg-12">
+				<div class="col-md-4 col-lg-4 col-sm-12">
+					<input type="text" name="" placeholder="Search with Po Number, Order Status, Comapny,Buyer Name" ng-keyup="search()" class="form-control" style="width: 90%;margin-left:-4%;" ng-model="searchKeywords">
+				</div>
+		        <div class="col-md-8 col-lg-8 col-sm-12">
+		          <input type="text" name="" readonly="true" placeholder="Drag a column to Group by" class="form-control" style="margin-left:-1%;">
+		        </div>  	
+  			</div>
+  			<div class="col-md-12 col-lg-12 col-sm-12">
+  				<div class="" style="margin-top:1%">
+  					<div id="grid1" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning ui-grid-grouping class="myGrid "></div>
+  				</div>
+  			</div>
+  		</div>
+  		</div>
+
+  	 <div id="CreateFilter" class="modal fade" role="dialog">
+      <div class="modal-dialog" style="margin-left:20%;margin-top:10%;">
+        <div class="modal-content">
+          <div style="width:800px; background-color:#fff;">
+            <form>
+            <div class="modal-header">
+              <button style="background:blue;color:#fff ;width:20px;height:20px;border-radius:10px" type="button" class="close" data-dismiss="modal">&times;</button>
+              <p class="Create-Filter-Modal-Title"><b>Create Filter</b></p>
+            </div>
+            <div class="modal-body">
+              <div class="popupCard" style="">
+              <div class="row">
+               <div style="display:inline;margin-left:8%;margin-top:2%;">
+                  <a class="popupCardHeader">Group 1</a>
+                  <p class="popupCardHeaderSub" style="margin-left:8%;">All conditions must be met.</p>
+               </div>
+               <div style="display:inline;">
+                  <select ng-options='condition for condition in conditions' ng-model='selectedCondition' class="btn btn-primary" style="width:80px;margin-top:-25%;margin-left:60%;height:30px; "></select>
+               </div></div>
+               <div >
+                 <select ng-options='selectcolmn.id as selectcolmn.title for selectcolmn in columnArray' ng-model='selectedColumn1' class="btn" placeholder="Choose Column" style="margin:2%;border-color:#B1B6B6;border-radius:5px;"></select>
+                  <select ng-options='selectcolmn.id as selectcolmn.title for selectcolmn in columnArray' ng-model='selectedColumn2' class="btn" placeholder="Choose Column" style="margin:2%;border-color:#B1B6B6;border-radius:5px;"></select>
+                  <input type="text" name="createFilterValue" placeholder="Write the Value for these filters" ng-model='createFilterValue' style="margin:2%;width:98%;border-color:#B1B6B6;border-radius:5px;" required>
+               </div>
+            </div>
+         
+            </div>
+            <div class="modal-footer">
+                  <button type="button" class="btn btn-default" ng-click='createFilterApply()' data-dismiss="modal" style="background:#4fc160;box-shadow:0 1px 2px 0 rgba(0,0,0,0.10);border-radius:2px;width:121px;height:35px;font-family:'Lato', sans-serif;font-size:16px;color:#ffffff;letter-spacing:0;text-align:center;float:left;border: none;">Apply</button>
+                  <button type="button" class="btn btn-default" ng-click="createFilterReset()" data-dismiss="modal" style="background:#f6f7fb;border-radius:2px;width:121px;height:35px;font-family:'Lato', sans-serif;font-size:16px;color:#294874;letter-spacing:0;text-align:center;float:left;border:none;">Reset</button>
+                    </div>
+                  </form>
+            
+           </div>
+        </div>
+      </div>
+    </div>
+
+
+  	<div id="hideColumnModal" class="modal fade" role="dialog">
+  		<div class="modal-dialog">
+  			<div class="modal-content" style="width:600px;margin-left:0%;">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Hide/Unhide Columns</h4>
+  				</div>
+  				<div class="modal-body clearfix" >
+  					<div class="col-lg-12">
+  						<div class="col-lg-6" style='border-right:1px solid black'>
+  							<p ng-repeat='data in columnArray track by $index' ng-if='$index<8' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+  						</div>
+  						<div class="col-lg-6">
+  							<p ng-repeat='data in columnArray track by $index' ng-if='$index>7'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+  						</div>
+  					</div>
+  				</div>
+  				<div class="modal-footer">
+  					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click='hideColumn()'>Apply Filter</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" ng-click='resetAllColumns()'>Reset Filter</button>
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+  </section>
+
+
+
+

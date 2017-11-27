@@ -1,0 +1,192 @@
+<section ng-controller="adminHomeController">
+	<img src='https://www.pedul.com/images/loading.gif' style="margin: 4% 2% 3% 35%;" ng-hide='ApiDone'>
+	<div class="" style="margin-top:0%;" ng-show='ApiDone'>	
+		<h1>Users</h1>
+		<div>
+			<div class="">
+	  			<div class="col-md-5 col-lg-5 col-sm-12" style="margin-left:3%;">
+	  				<ul class="pagination">
+	  					<li><a disabled class="filter_style" style="color:#4a4a4a;">User Status : </a></li>
+	  					<li id="POSTATUS_0" class="active" ><a ng-click="filter(0)" class="filter_style" style="width:60px;text-align: center;">All</a></li>
+	  					<li id="POSTATUS_1" class="" ><a ng-click="filter(1)" class="filter_style" style="width:100px;text-align: center;">Active</a></li>
+	  					<li id="POSTATUS_2" class="" ><a class="filter_style" ng-click="filter(2)" style="width:100px;text-align: center;">Inactive</a></li>
+	  				</ul>
+	  			</div>
+
+	  			<div class="col-md-7 col-lg-7 col-sm-12" style="margin-left:-4%;margin-top:1.5%;">
+	  				<div>
+						<input type="text" name="" placeholder="Search with User name,Full name, Email ID,Comapny,Default Company Id,Currency,Status" ng-keyup="search()" class="form-control" style="width: 100%;margin-left:-4%;" ng-model="searchKeywords">
+					</div>
+				</div>
+  		    </div>
+		</div>
+		<div class="col-md-12 col-lg-12 col-sm-12" style="">
+
+	  		<div class="container" style="margin-top:1%" >
+	  			<div id="grid1" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGrid ">	
+	  			</div>
+	  		</div>
+  	   </div>
+	</div>
+	
+	<div id="ActivateUser" class="modal fade" role="dialog">
+  		<div class="modal-dialog"  style="width:800px;">
+  			<div class="modal-content" >
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Activate User</h4>
+  				</div>
+  				<div class="modal-body" style="padding-bottom:62%;color:#A1A2A2">
+  					<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>First Name</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Full Name" class="form-control input-sm" style="height:35px ;" ng-model="FirstName" readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Last Name</label>
+	  							<input type="text" name="LastName" placeholder="Enter Last Name" class="form-control input-sm" style="height:35px" ng-model="LastName" readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>User Name</label>
+	  							<input type="text" name="UserName" placeholder="Enter User Name" class="form-control input-sm" style="height:35px" ng-model='UserName' readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Email ID</label>
+	  							<input type="text" name="Email" placeholder="Enter Email ID" class="form-control input-sm" style="height:35px" ng-model='Email' readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Phone No</label>
+	  							<input type="text" name="Phone No" placeholder="Enter Phone No" class="form-control input-sm" style="height:35px" readonly ng-model='Phone'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Default Company ID</label>
+	  							<input type="text" name="DefaultCompanyId" placeholder="Enter Default Company ID" class="form-control input-sm" style="height:35px" readonly ng-model='DefaultCompanyId'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Company Name</label>
+	  							<input type="text" name="CompanyName" placeholder="Enter Company Name" class="form-control input-sm" style="height:35px" readonly ng-model='CompanyName'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Currency</label>
+	  							<input type="text" name="Currency" placeholder="Enter Currency" class="form-control input-sm" style="height:35px," readonly ng-model='Currency'>
+	  						</div>
+	  						<div class="row">
+	  							<div class="col-lg-6 col-md-6" style="margin-left:-48%;">
+	  							<label>Address</label>
+	  							<input type="text" name="EditAddress" placeholder="Enter address" class="form-control input-sm" style="height:35px;width:95%" ng-model="EditAddress">
+	  				        </div>
+	  				        <div class="col-lg-6 col-md-6" style="margin-left:-2%;margin-right:-5%">
+	  							<label>IFS Supplier No</label>
+	  							<input type="text" name="ifsSupplierNum" placeholder="Enter IFS Supplier No" class="form-control input-sm" style="height:35px;width:95%" ng-model="ifsSupplierNum">
+	  				        </div>
+	  							
+	  						</div>
+	  						
+	  				        <div class="col-lg-6 col-md-6">
+	  							<label>Status</label>
+	  							<button style="width:150px" id='ActiveactiveButton'  ng-click="StatusUpdate('Active',true)">Active</button>
+			                    <button style="width:150px" id='ActiveinactiveButton' ng-click="StatusUpdate('Active',false)" >Inactive</button>
+	  						</div>
+	  						<div class="col-lg-12 col-md-12">
+	  							<label>Permissions</label>
+	  							<div class="col-lg-6 col-md-6">
+	  								<label><input type="checkbox" ng-model="isFISEnabled" value="{{isFISEnabled}}"> Enable Financial Information screen</label>
+	  								<label><input type="checkbox" ng-model="isPRSEnabled" value="{{isPRSEnabled}}" >Enable Purchase Requisition screen</label>
+	  							</div>
+	  							<div class="col-lg-6 col-md-6">
+	  								<label><input type="checkbox" ng-model="isSubmissionNonPOInvoiceEnabled" value="{{isSubmissionNonPOInvoiceEnabled}}" >Enanle Submission of Non-PO Invoices</label>
+	  							</div>
+	  				        </div>
+	  					</div>
+	  					
+  					</form>	
+  				</div>
+  				<div class="modal-footer">
+  					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;" data-dismiss="modal" ng-click='UpdateStatus(activeModalUserId)'>Confirm</button>
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+  	<div id="EditUser" class="modal fade" role="dialog">
+  		<div class="modal-dialog"  style="width:800px;">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Edit User</h4>
+  				</div>
+  				<div class="modal-body" style="padding-bottom:62%;color:#A1A2A2">
+  					<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>First Name</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Full Name" class="form-control input-sm" style="height:35px ;" ng-model="EditFirstName" >
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Last Name</label>
+	  							<input type="text" name="LastName" placeholder="Enter Last Name" class="form-control input-sm" style="height:35px" ng-model="EditLastName" >
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>User Name</label>
+	  							<input type="text" name="UserName" placeholder="Enter User Name" class="form-control input-sm" style="height:35px" ng-model='EditUserName' readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Email ID</label>
+	  							<input type="text" name="Email" placeholder="Enter Email ID" class="form-control input-sm" style="height:35px" ng-model='EditEmail' readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Phone No</label>
+	  							<input type="text" name="Phone No" placeholder="Enter Phone No" class="form-control input-sm" style="height:35px"  ng-model='EditPhone'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Default Company ID</label>
+	  							<input type="text" name="DefaultCompanyId" placeholder="Enter Default Company ID" class="form-control input-sm" style="height:35px"  ng-model='EditDefaultCompanyId'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Company Name</label>
+	  							<input type="text" name="CompanyName" placeholder="Enter Company Name" class="form-control input-sm" style="height:35px"  ng-model='EditCompanyName'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Currency</label>
+	  							<input type="text" name="Currency" placeholder="Enter Currency" class="form-control input-sm" style="height:35px,"  ng-model='EditCurrency'>
+	  						</div>
+	  						<div class="row">
+	  							<div class="col-lg-6 col-md-6" style="margin-left:-48%;">
+	  							<label>Address</label>
+	  							<input type="text" name="EditAddress" placeholder="Enter address" class="form-control input-sm" style="height:35px;width:95%" ng-model="EditAddress">
+	  				        </div>
+	  				        <div class="col-lg-6 col-md-6" style="margin-left:-2%;margin-right:-5%">
+	  							<label>IFS Supplier No</label>
+	  							<input type="text" name="EditifsSupplierNum" placeholder="Enter IFS Supplier No" class="form-control input-sm" style="height:35px;width:95%" ng-model="EditifsSupplierNum">
+	  				        </div>
+	  							
+	  						</div>
+	  						
+	  				        <div class="col-lg-6 col-md-6">
+	  							<label>Status</label>
+	  							<button style="width:150px" id='EditactiveButton'  ng-click="StatusUpdate('Edit',true)">Active</button>
+			                    <button style="width:150px" id='EditinactiveButton' ng-click="StatusUpdate('Edit',false)" >Inactive</button>
+	  						</div>
+	  						<div class="col-lg-12 col-md-12">
+	  							<label>Permissions</label>
+	  							<div class="col-lg-6 col-md-6">
+	  								<label><input type="checkbox" ng-model="EditisFISEnabled" value="{{EditisFISEnabled}}"> Enable Financial Information screen</label>
+	  								<label><input type="checkbox" ng-model="EditisPRSEnabled" value="{{EditisPRSEnabled}}" >Enable Purchase Requisition screen</label>
+	  							</div>
+	  							<div class="col-lg-6 col-md-6">
+	  								<label><input type="checkbox" ng-model="EditisSubmissionNonPOInvoiceEnabled" value="{{EditisSubmissionNonPOInvoiceEnabled}}" >Enanle Submission of Non-PO Invoices</label>
+	  							</div>
+	  				        </div>
+	  					</div>
+	  					
+  					</form>	
+  				</div>
+  				<div class="modal-footer">
+  					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;" data-dismiss="modal" ng-click='EditUserFunction(editModalUserId)'>Confirm</button>	
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+</section>

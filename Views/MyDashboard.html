@@ -1,0 +1,137 @@
+<section ng-controller='MyDashboardController' style="background-color:#F6FBFB">
+	<div class="container">
+		<p style="font-family:'Lato', sans-serif;font-size:24px;color:#4a4a4a;letter-spacing:0;text-align:left;margin-top:3%;margin-bottom:-3%;">My Dashboard</p>
+			<div class="col-lg-12" style="background-color:#fff;margin-top:5%;">
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left"> Recent Purchase Requisitions</p>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
+						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/PurchaseRequisitions" class="nav-content">View All</a>
+						</button>
+					</div>
+	
+				 <div class="col-lg-12 col-md-12 ">
+				 	<div class="" style="margin-top:1%">
+  					<div id="grid11" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-pinning class="myGridDashboard" ></div>
+  				</div>
+					
+			     </div>
+			  </div>
+
+
+			<div class="col-lg-12" style="background-color:#fff;margin-top:5%;">
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left"> Recent Purchase Orders</p>
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
+						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/PurchaseOrder" class="nav-content">View All</a>
+						</button>
+					</div>
+	
+				  <div class="col-lg-12 col-md-12 ">
+				 	<div class="" style="margin-top:1%">
+  						<div id="grid1" ui-grid="gridOptions1" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+  				  </div>
+			</div>
+		</div>
+		
+		<div class="col-lg-12" style="background-color:#fff;margin-top:5%;">
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left">Unpaid Invoices</p>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
+						<!-- <ul class="pagination" style="">
+						    <li id="POSTATUS_0" class="active"><a ng-click="filter(0)">All</a></li>
+						    <li id="POSTATUS_1" class=""><a ng-click="filter(1)">Paid</a></li>
+						    <li id="POSTATUS_2" class=""><a ng-click="filter(2)">Unpaid</a></li>
+						    <li id="POSTATUS_2" class=""><a ng-click="filter(3)">Current</a></li>
+						 </ul> -->
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
+						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/SupplierInvoice" class="nav-content">View All</a>
+						</button>
+					</div>
+					<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+						<div class="col-lg-6 col-md-6" style="border-left:#fff;border-width:2px;margin-top:1%;" >
+							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">03</p>
+							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Unpaid Invoices</p>
+						</div>
+						<div class="col-lg-6 col-md-6" style="margin-top:1%;">
+							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">2,98,050</p>
+							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">Amount Unpaid</p>
+						</div>
+					</div>
+					<div class="col-lg-12 col-md-12 ">
+				 	<div class="" style="margin-top:1%">
+  						<div id="grid2" ui-grid="gridOptions2" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+  				  </div>
+			</div>
+	
+				 
+			</div>
+
+		<div class="col-lg-12 col-md-12" style="background-color:#F6FBFB;margin-top:5%;">
+			<div class="col-lg-6 col-md-6" style="background-color:#fff;margin-left:-1%;">
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left">Shipments</p>
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-8%;">
+						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/SupplierShipment" class="nav-content">View All</a>
+						</button>
+					</div>
+					<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+						<div style="margin-top:2%;">
+							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">03</p>
+							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Shipments</p>
+						</div>
+					</div>
+	
+				  <div class="col-lg-12 col-md-12 ">
+				 	<div class="" style="margin-top:1%">
+  						<div id="grid3" ui-grid="gridOptions3" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+  				  </div>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-6" style="background-color:#fff;margin-left:2%;margin-right:-2%">
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left"> Payments</p>
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
+						
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-8%;">
+						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/Payments" class="nav-content">View All</a>
+						</button>
+					</div>
+					<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+						<div style="margin-top:2%;">
+							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:left;vertical-align: middle;margin-left:2%;">03</p>
+							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align:left;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Payments</p>
+							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;vertical-align: middle;text-align:right;margin-left: 13%;">67,00,900</p>
+							<p style="display:inline;vertical-align: middle;font-size:14px;color:#ffffff;letter-spacing:0;text-align:right;font-family:'Lato', sans-serif;">Amount Received</p>
+						</div>
+					</div>
+	
+				  <div class="col-lg-12 col-md-12 ">
+				 	<div class="" style="margin-top:1%">
+  						<div id="grid4" ui-grid="gridOptions4" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+  				  </div>
+			</div>
+		</div>
+			
+		</div>
+		
+	</div>
+</section>

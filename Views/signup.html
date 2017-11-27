@@ -1,0 +1,90 @@
+<section ng-controller="signupController" style="background-color: #fafbfc;margin-top:-2%;">
+	<div class="container" style="margin-top:1%;">
+		<div class="row" ng-hide ="loginDone == true">
+			<form ng-submit="submitForm()" name="signupForm">
+				<h2 class="Register-New-User">Register New User</h2>
+				<div class="col-lg-12 col-md-12">
+					<div class="YOUR-PERSONAL-INFO">YOUR PERSONAL INFO</div>
+					<div class="col-lg-4 col-md-4 loginFields">
+						<label class="Name-Style">First Name : </label>
+						<input type="text" class="form-control" pattern="[^\s]+" placeholder="First Name" ng-model="userFirstName" name="userFirstName" required>
+						<span ng-show="signupForm.userFirstName.$dirty && signupForm.userFirstName.$invalid" color="Red">** First Name should not contain any space.</span>
+					</div>
+
+					<div class="col-lg-4 col-md-4 loginFields">
+						<label class="Name-Style">Last Name : </label>
+						<input type="text" class="form-control" placeholder="Last Name" pattern="[^\s]+" ng-model="userLastName" nameclass="Name-Style"="userLastName" required>
+						<span ng-show="signupForm.userLastName.$dirty && signupForm.userLastName.$invalid" color="Red">** Last Name should not contain any space.</span>
+					</div>
+
+					<div class="col-lg-4 col-md-4 loginFields">
+						<label class="Name-Style">Phone Number : </label>
+						<input type="text" class="form-control" placeholder="Phone Number" pattern="[7-9]{1}[0-9]{9}" ng-model="userPhone" name="userPhone" required>
+						<span ng-show="signupForm.userPhone.$dirty && signupForm.userPhone.$error.pattern" color="Red">** Number is not correct.</span>
+					</div>
+
+					<div class="col-lg-4 col-md-4 loginFields">
+						<label class="Name-Style">Email : </label>
+						<input type="Email" class="form-control" placeholder="Email" ng-model="userEmail" name="userEmail" required>
+						<span ng-show="signupForm.userEmail.$dirty && signupForm.userEmail.$invalid" color="Red">** Email is not valid.</span>
+					</div>
+
+					<div class="col-lg-4 col-md-4 loginFields">
+						<label class="Name-Style">Company Name : </label>
+						<input type="text" class="form-control" placeholder="Company Name" ng-model="userCompany" name="userCompany" required>
+					</div>
+
+					<div class="col-lg-12 col-md-12" >
+						<label class="Name-Style">Address : </label>
+						<textarea type="text" class="form-control" placeholder="Your Full Address" ng-model="userAddress" name="userAddress" required style="width:97%;"></textarea>
+					</div>
+
+				</div>
+				<div class="col-lg-12">
+					<div class="YOUR-PERSONAL-INFO">YOUR ACCOUNT INFO</div>
+					<div class="col-lg-4 loginFields">
+						<label class="Name-Style">User Name : </label>
+						<input type="text" class="form-control" placeholder="User Name" pattern="[^\s]+" ng-model="userName" name="userName" required>
+						<span ng-show="signupForm.userName.$dirty && signupForm.userName.$invalid" color="Red">** User Name should not contain any space.</span>
+					</div>
+					<div class="col-lg-4 loginFields">
+						<label class="Name-Style">Password : </label>
+						<input type="password" class="form-control" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$" placeholder="password" ng-model="userPassword" name="userPassword" required>
+						<span ng-show="signupForm.userPassword.$dirty && signupForm.userPassword.$invalid" color="Red">Atleast 8 letters(Alpha Numeric only).</span>
+					</div>
+					<div class="col-lg-4 loginFields">
+						<label class="Name-Style">Confirm Password : </label>
+						<input type="password" class="form-control" placeholder="Confirm Password" ng-model="userConfirmPassword" name="userConfirmPassword" required>
+					</div>
+				</div>
+				
+				<div class="col-lg-12" style="margin-top:1%;">
+					<div class="col-lg-3 loginFields">
+						<form method="post" action="captcha.php">
+							<div class="g-recaptcha" data-sitekey="6LfxCjcUAAAAAMtFQkoyJNvYAxL6gapuVeCL6aow"></div><br>
+						    <input type="submit" class="btn btn-primary" value="Register my account">
+						<!-- <div class="col-lg-12 loginFields">
+							<a href="">Forgot Password?</a> Or <a href="#!/Signup"> Sign Up?</a>
+					    </div> -->
+						</form>
+					</div>
+					
+				</div>
+			</form>
+
+		</div>
+		<div style="width:100%;height:100%" ng-show ="loginDone == true">
+			<h1 style="margin-left:0%;margin-top:30%;text-align: justify;">Registration is successful: you will be notified via an e mail when the account is activated.</h1>	
+		</div>
+	</div>
+</section>
+<!-- <script src='https://www.google.com/recaptcha/api.js'></script> -->
+<!-- <script>
+    var onloadCallback = function() {
+        widgetId1 = grecaptcha.render('example1', {
+            'sitekey' : '6LdVbjMUAAAAAFK_H1Ui5zyaexiDMj7bT3YEGv3g',
+            'theme' : 'light'
+        });
+    };
+</script> -->
+<!-- <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"async defer></script> -->

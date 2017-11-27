@@ -1,0 +1,164 @@
+<section ng-controller="SettingsController" style="background:#e4e4e4;width: 100%;height: 100%;">
+	<div class="container" style="margin-top:0%;background:#e4e4e4;" >	
+		<h4>Settings</h4>
+		<div style="font-family: 'Lato', sans-serif;font-size:12px;color:#9b9b9b;letter-spacing:0.2px;text-align:left;">
+			<label>PORTAL SETTINGS</label>
+			<div class="col-md-12 col-lg-12">
+				<label>Dashboard Widgets Visibility</label>
+				<div class="col-md-4 col-lg-4" style="background-color:#fff">
+					
+	  				<label style="" ><input type="checkbox" value="" checked> Purchase Requisitions</label>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:5%;background-color:#fff">
+					
+	  				<label style=""><input type="checkbox" value="" checked> Recent Purchase Orders</label>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-right:-10%;background-color:#fff">
+					
+	  				<label style=""><input type="checkbox" value="" checked> Unpaid Invoices</label>
+				</div>
+				<div class="col-md-4 col-lg-4" style="background-color:#fff;margin-top:2%;">
+					
+	  				<label style=""><input type="checkbox" value="" checked> Recent Shipments</label>
+				</div>
+				<div class="col-md-4 col-lg-4" style="margin-left:5%;margin-right:10%;background-color:#fff;margin-top:2%;">
+					
+	  				<label style="background-color:#fff"><input type="checkbox" value="" checked> Recent Payments</label>
+				</div>
+			</div>
+
+				<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<label>Data Settings</label>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Supplier Invoice Months FIlter</label>
+	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Purchase Order months filter</label>
+	  							<input type="text" name="LastName" placeholder="Enter IFS Server URL" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Supplier Payments months filter</label>
+	  							<input type="text" name="FirstName" placeholder="Enter IFS User Name" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Supplier shipments month filter</label>
+	  							<input type="text" name="LastName" placeholder="Enter IFS User Password" class="form-control input-sm" style="height:35px">
+	  						</div>
+	  				        <div class="col-lg-12 col-md-12">
+	  							<button ng-hide ="toggle" style="width:150px">Update</button>
+	  							<button ng-hide ="!toggle" style="width:150px">Update Data Settings</button> 
+	  						</div>
+	  						<label>Default item lines in tables</label>
+	  						<div class="col-lg-12 col-md-12">
+	  							<button style="width:50px">20</button>
+	  							<button style="width:50px">50</button>
+	  							<button style="width:50px">100</button> 
+	  						</div>
+	  					</div>
+  					</form>	
+
+  					<label style="display:inline;float:left">SUPPLIER PROFILE</label>
+	  				<p ng-click="toggle = !toggle" style="display:inline;float:right;cursor:pointer"><span class="glyphicon glyphicon-refresh"></span> <u>Request an Update</u></p>
+  					<form ng-hide ="toggle" style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="row">
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Supplier ID</label>
+		  							<input type="text" name="settingssupplierId" placeholder="Enter Supplier ID" class="form-control input-sm" style="height:35px;" ng-model="EditsettingssupplierId" readonly>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Supplier Name</label>
+		  							<input type="text" name="settingsfullName" placeholder="Enter Supplier Name" class="form-control input-sm" style="height:35px" ng-model='EditsettingsfullName'>
+		  						</div>
+		  						<div class="col-lg-6 col-md-6">
+		  							<label>Document Address</label>
+		  							<input type="text" name="settingsAddress" placeholder="Enter Document Address" class="form-control input-sm" style="height:35px" ng-model='EditsettingsAddress'>
+		  						</div>
+	  						</div>
+	  						<div class="row">
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Payment Method</label>
+		  							<input type="text" name="settingsPayment" placeholder="Enter Payment Method" class="form-control input-sm" style="height:35px" ng-model="EditsettingsPayment">
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>E-Mail</label>
+		  							<input type="text" name="settingsEmail" placeholder="Enter E-Mail" class="form-control input-sm" style="height:35px" ng-model="EditsettingsEmail">
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Default pay address</label>
+		  							<label style="background-color:#fff"><input type="checkbox" ng-model="EditsettingsDefaultPayAddress" ng-checked="EditsettingsDefaultPayAddress" > Sames as Document address</label>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Default Visit Address</label>
+		  							<label style="background-color:#fff"><input type="checkbox" ng-model="EditsettingsDefaultVisitAddress" ng-checked="EditsettingsDefaultVisitAddress"  >Same as Document address</label>
+		  						</div>
+	  					    </div>
+	  						<div class="row">
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Phone</label>
+		  							<input type="text" name="LastName" placeholder="Enter Phone No." class="form-control input-sm" style="height:35px" ng-model="EditsettingsMobile">
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Payment terms</label>
+		  							<input type="text" name="LastName" placeholder="Enter Payment Term" class="form-control input-sm" style="height:35px" ng-model="EditsettingsPayment">
+		  						</div>
+	  					    </div>
+	  				        <div class="col-lg-12 col-md-12">
+	  							<button style="width:150px">Submit Update</button>
+	  							<button style="width:150px">Cancel</button> 
+	  						</div>
+	  					</div>
+  					</form>	
+
+  					<form ng-hide ="!toggle" style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="row">
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Supplier ID</label>
+		  							<p>{{settingssupplierId}}</p>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Supplier Name</label>
+		  							<p>{{settingsfullName}}</p>
+		  						</div>
+		  						<div class="col-lg-6 col-md-6">
+		  							<label>Document Address</label>
+		  							<p>{{settingsAddress}}</p>
+		  						</div>
+	  						</div>
+	  						<div class="row">
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Payment Method</label>
+		  							<p>CHK</p>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>E-Mail</label>
+		  							<p>{{settingsEmail}}</p>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Default pay address</label>
+		  							<label style="background-color:#fff"><input type="checkbox" ng-model="settingsDefaultPayAddress" ng-checked="settingsDefaultPayAddress"> Sames as Document address</label>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Default Visit Address</label>
+		  							<label style="background-color:#fff"><input type="checkbox" ng-model="settingsDefaultVisitAddress" ng-checked="settingsDefaultVisitAddress"> Sames as Document address</label>
+		  						</div>
+	  					    </div>
+	  						<div class="row">
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Phone</label>
+		  							<p>{{settingsMobile}}</p>
+		  						</div>
+		  						<div class="col-lg-3 col-md-3">
+		  							<label>Payment terms</label>
+		  							<p>{{}}</p>
+		  						</div>
+	  					    </div>
+	  					</div>
+  					</form>	
+			
+		</div>
+	</div>
+</section>
