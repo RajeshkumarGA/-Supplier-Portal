@@ -2,101 +2,181 @@
 	<div>
 		<p style="font-family:Lato-Regular;font-size:24px;color:#4a4a4a;letter-spacing:0;text-align:left;">Create PO Linked Invoice</p>
 		<div class="col-lg-12 col-md-12">
-	  						<label>Confirm Purchase Order Info</label>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Order ID</label>
-	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" value="{{OrderID}}">
-	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Supplier ID</label>
-	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" value="{{SupplierID}}">
-	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Supplier Name</label>
-	  							<input type="text" name="FirstName" placeholder="SupplierName" class="form-control input-sm" style="height:35px" value="{{SupplierName}}">
-	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>PO Status</label>
-	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" value="{{POStatus}}">
-	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Amount</label>
-	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" value="{{Amount}}">
-	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Currency</label>
-	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px" value="{{Currency}}">
-	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Date Entered</label>
-	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" value="{{DateEntered}}">
-	  						</div>
-	  					</div>
+				<h4><u>CONFIRM PURCHASE ORDER INFO</u></h4>
+				<div class="col-lg-3 col-md-3">
+					<label>PO No</label>
+					<div class="dropdown dropdown-scroll open">
+						<div class="input-group input-group-sm search-control" style="position:static;"> 
+							<input type="text" class="form-control input-sm" style="height:35px" placeholder="PO Number" ng-model="query" ng-focus="varShow=true" ng-keypress="myFunct($event)" ng-init="varShow=false"><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span></input>
+						</div>
+						<ul class="dropdown-menu" ng-show="varShow">
+							<li role="presentation" ng-repeat='item in items | filter:query' ng-click=fun(item.PO_Number,$index)> <a> {{item.PO_Number}} </a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3">
+					<label>Supplier ID</label>
+					<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="PoSupplierID">
+				</div>
+				<div class="col-lg-3 col-md-3">
+					<label>Supplier Name</label>
+					<input type="text" name="FirstName" placeholder="SupplierName" class="form-control input-sm" style="height:35px" ng-model="PoSupplierName">
+				</div>
+				<div class="col-lg-3 col-md-3">
+					<label>PO Status</label>
+					<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="POStatus">
+				</div>
+				<div class="col-lg-3 col-md-3">
+					<label>PO Amount</label>
+					<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="POAmount">
+				</div>
+				<div class="col-lg-3 col-md-3">
+					<label>PO Currency</label>
+					<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="POCurrency">
+				</div>
+				<div class="col-lg-3 col-md-3">
+					<label>Date Entered</label>
+					<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="DateEntered">
+				</div>
+			</div>
 
 	  					<div class="col-lg-12 col-md-12">
-	  						<label>Invoice Details</label>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Order ID</label>
-	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" value="{{OrderID}}">
+	  						<h4><u>Invoice Details</u></h4>
+	  						
+	  						<div class="col-lg-3 col-md-3">
+	  							<label>Invoice No</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Invoice No." class="form-control input-sm" style="height:35px;" ng-model="InvoiceNo">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Supplier ID</label>
-	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" value="{{SupplierID}}">
+	  						<div class="col-lg-3 col-md-3">
+	  							<label>Invoice Date</label>
+	  							<input type="date" name="LastName" placeholder="Enter Invoice date" class="form-control input-sm" style="height:35px" ng-model="InvoiceDate">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Supplier Name</label>
-	  							<input type="text" name="FirstName" placeholder="SupplierName" class="form-control input-sm" style="height:35px" value="{{SupplierName}}">
+	  						<div class="col-lg-3 col-md-3">
+	  							<label>Due Date</label>
+	  							<input type="date" name="LastName" placeholder="Enter Due Date" class="form-control input-sm" style="height:35px" ng-model="DueDate">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>PO Status</label>
-	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" value="{{POStatus}}">
+	  						<div class="col-lg-3 col-md-3">
+								<label>Company</label>
+								<input type="text" name="FirstName" placeholder="Enter company name" class="form-control input-sm" style="height:35px" ng-model="POCompany">
+							</div>
+	  						<div class="col-lg-3 col-md-3">
+								<label>Currency</label>
+								<input type="text" name="FirstName" placeholder="Enter currency" class="form-control input-sm" style="height:35px" ng-model="PoCurrency">
+							</div>
+							<div class="col-lg-3 col-md-3">
+	  							<label>Payment Reference</label>
+	  							<input type="text" name="LastName" placeholder="Enter payment reference" class="form-control input-sm" style="height:35px" ng-model="PaymentReference">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Amount</label>
-	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" value="{{Amount}}">
+	  						<div class="col-lg-3 col-md-3">
+	  							<label>Invoice Amount</label>
+	  							<input type="text" name="LastName" placeholder="Enter amount" class="form-control input-sm" style="height:35px" ng-model="InvoiceAmount">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Currency</label>
-	  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px" value="{{Currency}}">
+	  						<div class="col-lg-3 col-md-3">
+	  							<label>Tax Amount</label>
+	  							<input type="text" name="LastName" placeholder="Enter Tax amount" class="form-control input-sm" style="height:35px" ng-model="TaxAmount">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
-	  							<label>Date Entered</label>
-	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" value="{{DateEntered}}">
+	  						<div class="col-lg-3 col-md-3">
+	  							<label>Status</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Status" class="form-control input-sm" style="height:35px;" ng-model="poStatus">
 	  						</div>
-	  						<div class="col-lg-4 col-md-4">
+	  						<div class="col-lg-9 col-md-9">
 	  							<label>Notes</label>
-	  							<input type="text" name="LastName" placeholder="Any comments?" class="form-control input-sm" style="height:35px" value="{{Notes}}">
+	  							<input type="text" name="LastName" placeholder="Any comments you have?" class="form-control input-sm" style="height:35px" ng-model="Notes">
 	  						</div>
 	  					</div>
 
 	  				<div class="col-md-12 col-lg-12">
-	  					<div style="width:100%;height:300px; background:#f2f3f8;">
-	  						<label style="">Invoice Line Items</label>
-	  						<div>
-	  							<button style="float:right;margin:1%">+ Add a Line Item</button>
+	  					
+	  					
+	  						<h4><b><u>Invoice Line Items</u></b></h4>
+	  						<div class="" style="margin-top:1%">
+			  					<div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-pagination ui-grid-resize-columns ui-grid-move-columns  ui-grid-pinning  class="myGrid"></div>
+			  				</div>
+	  						<!-- <div class="col-md-12 col-lg-12" ng-show="addNew" style="border:solid 2px #D6DBDF;margin-top:1%;">
+	  							<div class="col-lg-1 col-md-1">
+		  							<label>Line Id</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="LineId">
+	  						    </div> 
+	  						    <div class="col-lg-2 col-md-2">
+		  							<label>Description *</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="Description">
+	  						    </div>
+	  						    <div class="col-lg-1 col-md-1">
+		  							<label>UMO</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="UMO">
+	  						    </div>
+	  						    <div class="col-lg-1 col-md-1">
+		  							<label>Quantity</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="Quantity">
+	  						    </div>
+	  						    <div class="col-lg-1 col-md-1" style="margin-right:5%;">
+		  							<label>Tax Type</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="TaxType">
+	  						    </div>
+	  						    <div class="col-lg-2 col-md-2" style="margin-left:-5%;">
+		  							<label>Tax Value</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="TaxValue">
+	  						    </div>
+	  						    <div class="col-lg-2 col-md-2">
+		  							<label>Unit Price*</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="UnitPrice">
+	  						    </div>
+	  						    <div class="col-lg-2 col-md-2">
+		  							<label>Invoice Line Amount</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="InvoiceLineAmount">
+	  						    </div>
+	  						    <div>
+	  								<button style="float:right;margin:1%" ng-click="addNewItem()" >+ Add a Line Item</button>
+	  							</div>
+	  						</div> -->
+	  						<!-- <div><button ng-hide="addNew"  style="float:right;margin:1%" ng-click="addNew=!addNew">New</button>
+	  							<button ng-show="addNew" style="float:right;margin:1%" ng-click="addNewItem()" >+ Add a Line Item</button>
 	  							<button style="float:right;margin:1%">Load PO Lines</button>
-	  						</div>
-	  					</div>
+	  						</div> -->
+	  					
 	  				</div>
 
 	  				<div class="col-lg-12 col-md-12">
-	  					<div class="col-md-3 col-lg-3">
+	  					<!-- <div class="col-md-3 col-lg-3">
 	  						<label style="">Attachments</label>
 	  						<p>Trigger Invoice no. 349</p>
-	  						<p>Trigger Invoice no. 349</p>
 	  						
-	  					</div>
-	  					<div class="col-md-3 col-lg-3">
-	  						<label><span class="glyphicon glyphicon-open"></span> Upload document, image</label>
-	  						<span class="glyphicon glyphicon-trash"> Delete Attachment</span><br>
-	  						<span class="glyphicon glyphicon-trash"> Delete Attachment</span>
-	  					</div>
+	  						
+	  					</div> -->
+	  					<!-- <div class="col-md-9 col-lg-9"> -->
+	  						<div class="col-md-6 col-lg-6" style="background: #EAEDED;padding-bottom:15px;">
+	  							<label ><span class="glyphicon glyphicon-open"></span> Upload document, image</label>
+	  							<div class="col-md-6 col-lg-6">
+	  								<input type="file" file-model="Data"/>
+	  							</div>
+	  							<div class="col-md-6 col-lg-6">
+	  								<button class="glyphicon glyphicon-open" ng-click="uploadFile()" style="margin-left: 30%;"> Upload Attachment</button>
+	  							</div>
+	  							<div class="col-md-8 col-lg-8">
+		  							<table style="border: 1px solid black;width:100%">
+		  								<tr style="border: 1px solid black;height:20px;" ng-repeat="name in pdfData">
+		  									<td style="text-align:left;border: 1px solid black;padding-left:10px;padding-right:10px">{{name.fileName}}<span class="glyphicon glyphicon-trash" style="float:right;vertical-align:middle;" ng-click="deletePdf(name.attachmentID)"></span>
+		  										<span class="glyphicon glyphicon-paperclip" style="float:right;vertical-align:middle;" ng-click="downloadPdf($index)"></span></td>
+		  								</tr>
+		  							</table>
+	  							</div>
+	  							<div class="col-md-4 col-lg-4" ng-show="lading">
+	  								<span class="glyphicon glyphicon-refresh fa-spin"></span>
+	  								Loading
+	  							</div>
+	  						</div>
+	  						  
+	  							<!-- <button class="glyphicon glyphicon-open" ng-click="uploadFile()" > Upload Attachment</button>
+	  					    < -->
+	  						<!-- <span class="glyphicon glyphicon-trash"> Delete Attachment</span> -->
+	  					<!-- </div> -->
 	  					
 	  				</div>
 	  				<div class="col-md-12 col-lg-12">
-	  					<button style="float:left;margin:1%">Submit Invoice</button>
-	  					<button style="float:left;margin:1%">Save as Draft</button>
-	  					<button style="float:left;margin:1%">Cancel Invoice</button>
+	  					<button style="float:left;margin:1%" ng-click='SubmitInvoice()'>Submit Invoice</button>
+	  					<button style="float:left;margin:1%" ng-click="getSelectedRows()">Save as Draft</button>
+	  					<button style="float:left;margin:1%"><a href="#!/SupplierInvoice" style="color:black ">Cancel Invoice</a></button>
 	  					
 	  				</div>
 

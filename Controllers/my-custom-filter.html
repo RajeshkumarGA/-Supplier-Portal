@@ -1,12 +1,7 @@
-
 <div>
 	<div class="w3-dropdown-hover" style="background:none;float: right;margin-bottom:-20%;">
-    	<button style="float:right;border:none;background:none;"><span class="glyphicon glyphicon-filter"></span></button>
-    	<div class="w3-dropdown-content w3-bar-block" style="position:;z-index:100;font-size:12px;min-width:110px;background:#e4e4e4;overflow-x:auto;">
-      		<a style="" ng-click="grid.appScope.searchFilter(link.id,colFilter.options[0].index);$parent.selectedIndex=$index" class="w3-bar-item"  ng-repeat="link in colFilter.options[1]">{{link.value}} <span ng-show="$parent.selectedIndex == $index"	 style="float:right;" class="glyphicon glyphicon-ok" ></span></a>
+    	 <select style="border:none;background-color: #fafbfc;font-family: 'Lato',color:#4a4a4a;width:17px;float:right; " ng-model="selectedLink" ng-change="grid.appScope.searchFilter(selectedLink.id,colFilter.options[0].index);$parent.selectedIndex=$index" ng-options="link.value for link in colFilter.options[1]"></select>
     	</div>
    </div>
    <input class="form-control" type="text" ng-model="colFilter.term" style="width:80%;height:22px;padding-top:-20%;"/>
 </div>
-
-<!-- <select class="form-control" ng-model="colFilter.condition" ng-options="option.id as option.value for option in colFilter.options"></select> -->

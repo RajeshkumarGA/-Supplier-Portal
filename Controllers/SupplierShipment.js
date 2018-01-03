@@ -1,6 +1,26 @@
 app.controller('SupplierShipmentController', ['$scope','sessionService', '$rootScope','$http', 'uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants',function ($scope,sessionService, $rootScope,$http, uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants) {
 $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
-$rootScope.userName = sessionService.get('UserName'); 
+  $rootScope.userName = sessionService.get('UserName');
+  if(sessionService.get('tempisPRSEnabled')=='true'){
+    $rootScope.IsPRSEnabled=true;
+    }
+    else{
+      $rootScope.IsPRSEnabled=false;
+    }
+    if(sessionService.get('tempisFISEnabled')=='true'){
+      $rootScope.isFISEnabled=true;
+    }
+    else{
+      $rootScope.isFISEnabled=false;
+      
+    }
+    if(sessionService.get('tempisSubmissionNonPOInvoiceEnabled')=='true'){
+      $rootScope.isSubmissionNonPOInvoiceEnabled=true;
+    }
+    else{
+      $rootScope.isSubmissionNonPOInvoiceEnabled=false;
+      
+    }
 ifsSupplierID = sessionService.get('ifsSupplierNum');
 $scope.ApiDone= false;
  tokenType = sessionService.get('TokenType');
@@ -16,6 +36,7 @@ $scope.ApiDone= false;
         for(var i=0;i<responce.data.length;i++){
             $scope.Arrival_date=responce.data[i].arrivaL_DATE.split('T');
             $scope.Approved_date=responce.data[i].approveD_DATE.split('T');
+            $scope.FinalInvoiceDate=responce.data[i].finallY_INVOICED_DATE.split('T');
             var obj = {
                 "Supplier_Id":ifsSupplierID,
                 "Line_No":responce.data[i].linE_NO,
@@ -36,7 +57,7 @@ $scope.ApiDone= false;
                 "Qty_To_Inspect":responce.data[i].qtY_TO_INSPECT,
                 "Arrival_Date":$scope.Arrival_date[0],
                 "Approved_Date":$scope.Approved_date[0],
-                "Final_Invoice_Date":responce.data[i].finallY_INVOICED_DATE,
+                "Final_Invoice_Date":$scope.FinalInvoiceDate[0],
                 "Qty_Invoiced":responce.data[i].qtY_INVOICED,
                 "Qty_Scrapped_Credit":responce.data[i].qtY_SCRAPPED_CREDIT,
                 "Qty_Scrapped_No_Credit":responce.data[i].qtY_SCRAPPED_NO_CREDIT,
@@ -55,7 +76,29 @@ $scope.ApiDone= false;
             }
             $scope.dataset.push(obj);
         }
-        data($scope.dataset);
+        $scope.linesPerPage = sessionService.get("linesPerPage")
+        $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
+         data($scope.dataset);
+        $scope.ApiDone= true;
+        var count = 0;
+        var count1 = 0;
+        
+        for(var i=0;i<$scope.dataset.length;i++){
+          if($scope.dataset[i].State=='Cancelled'){count++;}
+          else if ($scope.dataset[i].State=='Received') {count1++;}
+         
+        }
+        $scope.PieCancelled = count;
+        $scope.pieData.push(count);
+        $scope.PieReceived = count1;
+        $scope.pieData.push(count1);
+       
+        var t = count+count1;
+        $scope.PieCancelledPer = ((count*100)/t).toFixed(0);
+        $scope.PieReceivedPer = ((count1*100)/t).toFixed(0);
+       
+        $scope.renderPieChart();
+        dateChart($scope.dataset);
         $scope.ApiDone= true;
     });
 
@@ -113,8 +156,8 @@ $scope.ApiDone= false;
     onRegisterApi: function(gridApi){
       $scope.gridApi = gridApi;
     },
-    paginationPageSizes: [10,20,75],
-    paginationPageSize: 10,
+    paginationPageSizes: [20,50,100],
+    // paginationPageSize: 10,
     enablePinning: false,
     columnDefs: [
        
@@ -220,19 +263,19 @@ $scope.ApiDone= false;
                  options:[{index:16},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
           }
         },
-        { field: 'Arrival_Date',displayName: "Arrival Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'Arrival_Date',displayName: "Arrival Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:17},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
           }
         },
-        { field: 'Approved_Date',displayName: "Approved Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'Approved_Date',displayName: "Approved Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:18},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
           }
         },
-        { field: 'Final_Invoice_Date',displayName: "Final Invoice Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'Final_Invoice_Date',displayName: "Final Invoice Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:19},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -337,38 +380,38 @@ $scope.ApiDone= false;
 
     $scope.columnArray=[
        
-        {'id':3,'title':'Description','value':false},
-        {'id':4,'title':'Supplier Name','value':false},
-        {'id':5,'title':'Release No','value':false},
-        {'id':6,'title':'Receipt No','value':false},
-        {'id':7,'title':'Part No','value':false},
-        {'id':8,'title':'State','value':false},
-        {'id':9,'title':'Qty Arrived','value':false},
-        {'id':10,'title':'Buy Unit Meas','value':false},
-        {'id':11,'title':'Inventory Part','value':false},
-        {'id':12,'title':'Invoice Qty Arrived','value':false},
-        {'id':13,'title':'Catch Qty Arrived','value':false},
-        {'id':14,'title':'Catch UOM','value':false},
-        {'id':15,'title':'Qty Inspected','value':false},
-        {'id':16,'title':'Qty To Inspect','value':false},
-        {'id':17,'title':'Arrival Date','value':false},
-        {'id':18,'title':'Approved Date','value':false},
-        {'id':19,'title':'Final Invoice Date','value':false},
-        {'id':20,'title':'Qty Invoiced','value':false},
-        {'id':21,'title':'Qty Scrapped Credit','value':false},
-        {'id':22,'title':'Qty Scrapped No Credit','value':false},
-        {'id':23,'title':'Qty Returned Credit','value':false},
-        {'id':24,'title':'Qty Returned No Credit','value':false},
-        {'id':25,'title':'Qty Consignment','value':false},
-        {'id':26,'title':'Notified Consumed Qty','value':false},
-        {'id':27,'title':'Receiver','value':false},
-        {'id':28,'title':'Receipt Reference','value':false},
-        {'id':29,'title':'Note Text','value':false},
-        {'id':30,'title':'Reqisition No','value':false},
-        {'id':31,'title':'Requsition Line','value':false},
-        {'id':32,'title':'Project ID','value':false},
-        {'id':33,'title':'Project Name','value':false},
-        {'id':34,'title':'Total Qty','value':false}
+        {'id':0,'title':'Description','value':false},
+        {'id':1,'title':'Supplier Name','value':false},
+        {'id':2,'title':'Release No','value':false},
+        {'id':3,'title':'Receipt No','value':false},
+        {'id':4,'title':'Part No','value':false},
+        {'id':5,'title':'State','value':false},
+        {'id':6,'title':'Qty Arrived','value':false},
+        {'id':7,'title':'Buy Unit Meas','value':false},
+        {'id':8,'title':'Inventory Part','value':false},
+        {'id':9,'title':'Invoice Qty Arrived','value':false},
+        {'id':10,'title':'Catch Qty Arrived','value':false},
+        {'id':11,'title':'Catch UOM','value':false},
+        {'id':12,'title':'Qty Inspected','value':false},
+        {'id':13,'title':'Qty To Inspect','value':false},
+        {'id':14,'title':'Arrival Date','value':false},
+        {'id':15,'title':'Approved Date','value':false},
+        {'id':16,'title':'Final Invoice Date','value':false},
+        {'id':17,'title':'Qty Invoiced','value':false},
+        {'id':18,'title':'Qty Scrapped Credit','value':false},
+        {'id':19,'title':'Qty Scrapped No Credit','value':false},
+        {'id':20,'title':'Qty Returned Credit','value':false},
+        {'id':21,'title':'Qty Returned No Credit','value':false},
+        {'id':22,'title':'Qty Consignment','value':false},
+        {'id':23,'title':'Notified Consumed Qty','value':false},
+        {'id':24,'title':'Receiver','value':false},
+        {'id':25,'title':'Receipt Reference','value':false},
+        {'id':26,'title':'Note Text','value':false},
+        {'id':27,'title':'Reqisition No','value':false},
+        {'id':28,'title':'Requsition Line','value':false},
+        {'id':29,'title':'Project ID','value':false},
+        {'id':30,'title':'Project Name','value':false},
+        {'id':31,'title':'Total Qty','value':false}
     ];
     $scope.hideColumn=function(){
       for(var i=0;i<$scope.columnArray.length;i++){
@@ -413,6 +456,7 @@ $scope.ApiDone= false;
     $scope.workingDatabase=[];
     selectedIndex1=parseInt($scope.selectedColumn1)+3;
     selectedIndex2=parseInt($scope.selectedColumn2)+3;
+    console.log(selectedIndex1);
      selectedcol1 = $scope.gridOptions.columnDefs[selectedIndex1].field;
      selectedcol2 =$scope.gridOptions.columnDefs[selectedIndex2].field;
     if($scope.selectedCondition=='OR'){
@@ -464,14 +508,8 @@ $scope.ApiDone= false;
   };
   
   function data(data) {
+    $scope.dateBarChart=[];
     $scope.gridOptions.data = data;
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.Arrival_Date = new Date(val.Arrival_Date);
-    });
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.Approved_Date = new Date(val.Approved_Date);
-    });
-
   }
   data($scope.dataset);
 
@@ -482,27 +520,32 @@ $scope.ApiDone= false;
     myEl.addClass('active');
     $scope.workingDatabase=$scope.dataset;
     switch (getValue){
-      case 0  :    data($scope.workingDatabase);
+      case 0  :
+      angular.element( document.querySelector('#POSTATUS_0')).addClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');    
+      data($scope.workingDatabase);
+      
       break;
-      case 1  :    $scope.workingDatabase=[];
+      case 1  :
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');    
+      $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
+        if($scope.dataset[i].State=='Cancelled')
           $scope.workingDatabase.push($scope.dataset[i]);
 
       }
       data($scope.workingDatabase);
       break;
-      case 2 :     $scope.workingDatabase=[];
+      case 2 :
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).addClass('active');
+      $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Closed')
-          $scope.workingDatabase.push($scope.dataset[i]);
-
-      }
-      data($scope.workingDatabase);
-      break;
-      case 3 :     $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
+        if($scope.dataset[i].State=='Received')
           $scope.workingDatabase.push($scope.dataset[i]);
 
       }
@@ -511,97 +554,119 @@ $scope.ApiDone= false;
 
     }
   }
-  $scope.selectdate=function(){
-    $scope.fdate= new Date($scope.Arrival_Date_Search);
-    $scope.edate= new Date($scope.Approved_Date_Search);
-    debugger;
-    if($scope.Arrival_Date_Search && $scope.Approved_Date_Search){
-      $scope.workingDatabase=[];
-     /* var fdate= new Date($scope.Arrival_Datesearch);
-      if(fdate.getMonth()+1>=10){
-        strFDate=fdate.getFullYear()+'-'+parseInt(fdate.getMonth()+1)+'-'+fdate.getDate();
+ $scope.selectdate=function(){
+    $scope.fdate= new Date($scope.requisitionDatesearch);
+    $scope.edate= new Date($scope.requisitionDateEndsearch);
+    $scope.workingDatabase=[];
+    if($scope.requisitionDatesearch && $scope.requisitionDateEndsearch){
+      
+      var date;
+      for(var i=0;i<$scope.dataset.length;i++){
+         date = new Date($scope.dataset[i].Arrival_Date);
+        if($scope.fdate-date<=0 && $scope.edate-date>=0 )
+          $scope.workingDatabase.push($scope.dataset[i]);
+        
+        }
+        data($scope.workingDatabase);
       }
       else{
-        strFDate=fdate.getFullYear()+'-0'+parseInt(fdate.getMonth()+1)+'-'+fdate.getDate();
-      }
-      var edate= new Date($scope.Approved_Date_Search);
-      if(edate.getMonth()+1>=10){
-        strEDate=edate.getFullYear()+'-'+parseInt(edate.getMonth()+1)+'-'+edate.getDate();
-      }
-      else{
-        strEDate=edate.getFullYear()+'-0'+parseInt(edate.getMonth()+1)+'-'+edate.getDate();
-      }
-      console.log(strEDate);
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Arrival_Date.getMonth()+1>=10){
-          datasetArrival_Date=$scope.dataset[i].Arrival_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Arrival_Date.getMonth()+1)+'-'+$scope.dataset[i].Arrival_Date.getDate();
-        }
-        else{
-          datasetArrival_Date=$scope.dataset[i].Arrival_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Arrival_Date.getMonth()+1)+'-'+$scope.dataset[i].Arrival_Date.getDate();
-        }
-        if($scope.dataset[i].Approved_Date.getMonth()+1>=10){
-          datasetApproved_Date=$scope.dataset[i].Approved_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Approved_Date.getMonth()+1)+'-'+$scope.dataset[i].Approved_Date.getDate();
-        }
-        else{
-          datasetApproved_Date=$scope.dataset[i].Approved_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Approved_Date.getMonth()+1)+'-'+$scope.dataset[i].Approved_Date.getDate();
-        }
-        if(datasetArrival_Date.match(strFDate) && datasetApproved_Date.match(strEDate) ){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }*/
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].Arrival_Date.getDate() && $scope.fdate.getMonth()-1<=$scope.dataset[i].Arrival_Date.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].Arrival_Date.getFullYear() && $scope.edate.getDate()>=$scope.dataset[i].Approved_Date.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].Approved_Date.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].Approved_Date.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-      data($scope.workingDatabase);
-    }
-  else{
-    if($scope.Arrival_Date_Search) {
-        debugger;
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].Arrival_Date.getDate() && $scope.fdate.getMonth()<=$scope.dataset[i].Arrival_Date.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].Arrival_Date.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
-          debugger;
-        }
-      }
-    }
-    else{
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.edate.getDate()>=$scope.dataset[i].Approved_Date.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].Approved_Date.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].Approved_Date.getFullYear()){
-           $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-    }
-   /* var date= new Date($scope.Arrival_Datesearch);
-    if(date.getMonth()+1>=10){
-      strFDate=date.getFullYear()+'-'+parseInt(date.getMonth()+1)+'-'+date.getDate();
-    }
-    else{
-      strFDate=date.getFullYear()+'-0'+parseInt(date.getMonth()+1)+'-'+date.getDate();
-    }
-    for(var i=0;i<$scope.dataset.length;i++){
-      if($scope.dataset[i].Arrival_Date.getMonth()+1>=10){
-        datasetArrival_Date=$scope.dataset[i].Arrival_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Arrival_Date.getMonth()+1)+'-'+$scope.dataset[i].Arrival_Date.getDate();
-      }
-      else{
-        datasetArrival_Date=$scope.dataset[i].Arrival_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Arrival_Date.getMonth()+1)+'-'+$scope.dataset[i].Arrival_Date.getDate();
-      }
-      if(datasetArrival_Date.match(strFDate)){
-        $scope.workingDatabase.push($scope.dataset[i]);
-      }
-    }*/
-    data($scope.workingDatabase);
 
-  }
-    if(!$scope.Arrival_Date_Search && ! $scope.Approved_Date_Search){
-      $scope.workingDatabase=[];
+         if($scope.requisitionDatesearch){
+           
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Arrival_Date);
+               if($scope.fdate-date<=0){
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            data($scope.workingDatabase);
+
+      }
+      else{
+          if($scope.requisitionDateEndsearch){
+            
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Arrival_Date);
+               if($scope.edate-date>=0){
+                console.log('in');
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            console.log($scope.workingDatabase);
+            
+
+           }
+
+           data($scope.workingDatabase);
+      }
+     
+    }
+    
+    if(!$scope.requisitionDatesearch && ! $scope.latestOrderDatesearch){
+      
       $scope.workingDatabase=$scope.dataset;
       data($scope.workingDatabase);
     }
   }
- 
+ function dateChart(data){
+     _.forEach(data, function (val) {
+       var date_chart=new Date(val.Arrival_Date);
+       // console.log(date_chart);
+      $scope.dateBarChart.push({year:date_chart.getFullYear(),month:date_chart.getMonth()});
+    });
+      var thisYear = new Date();
+    // console.log("year is ");
+    // console.log(thisYear.getFullYear());
+    $scope.dateBarChartCount=[0,0,0,0,0,0,0,0,0,0,0,0];
+    for (var i=0;i<$scope.dateBarChart.length;i++){
+      if($scope.dateBarChart[i].year==thisYear.getFullYear()){
+        // console.log($scope.dateBarChart[i].month);
+        var month = $scope.dateBarChart[i].month;
+        switch (month+1) {
+          case 1:
+          $scope.dateBarChartCount[0]++;
+          console.log(month);
+          break;
+          case 2:
+          $scope.dateBarChartCount[1]++;
+          break;
+          case 3:
+          $scope.dateBarChartCount[2]++;
+          break;
+          case 4:
+          $scope.dateBarChartCount[3]++;
+          break;
+          case 5:
+          $scope.dateBarChartCount[4]++;
+          break;
+          case 6:
+          $scope.dateBarChartCount[5]++;
+          break;
+          case 7:
+          $scope.dateBarChartCount[6]++;
+          break;
+          case 8:
+          $scope.dateBarChartCount[7]++;
+          break;
+          case 9:
+          $scope.dateBarChartCount[8]++;
+          break;
+          case 10:
+          $scope.dateBarChartCount[9]++;
+          break;
+          case 11:
+          $scope.dateBarChartCount[10]++;
+          break;
+          case 12:
+          $scope.dateBarChartCount[11]++;
+          break;
+        }
+      }
+    }
+    $scope.renderBarChart();
+  }
     //If DIV is visible it will be hidden and vice versa.
    $scope.toggle = true;
     $scope.$watch('toggle', function(){
@@ -610,52 +675,15 @@ $scope.ApiDone= false;
     })  
   $scope.pieData=[];
   $scope.renderCharts = function(){
-    $scope.renderPieChart();
-    $scope.renderBarChart();
-    
    
-    var count = 0;
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
-          count++;
-      }
-      $scope.PieActive = count;
-      $scope.pieData.push(count);
-
-    var count1 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Closed')
-          count1++;
-      }
-       $scope.PieClosed = count1;
-       $scope.pieData.push(count1);
-
-    var count2 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
-          count2++;
-      }
-      $scope.PieCancelled = count2;
-      $scope.pieData.push(count2);
-
-      var t = count+count1+count2;
-      $scope.PieActivePer = ((count*100)/t).toFixed(0);
-      $scope.PieClosedPer = ((count1*100)/t).toFixed(0);
-      $scope.PieCancelledPer = ((count2*100)/t).toFixed(0);
-      // console.log("pie Data is");
-      // console.log($scope.pieData[0]);
-
   }
 
   $scope.renderPieChart = function(){
      var PieTotal = parseInt($scope.PieActive) + parseInt($scope.PieClosed) + parseInt($scope.PieCancelled);
      console.log(PieTotal);
-     // $scope.PieActivePer = ((33*100)/(33+231+44)).toFixed(0);
-     // $scope.PieClosedPer = ((231*100)/(33+231+44)).toFixed(0);
-     // $scope.PieCancelledPer = ((44*100)/(33+231+44)).toFixed(0);
-      var data = {datasets: [{data: [33,231,44],
-        backgroundColor: ["#f8e71c","#f5a800","#bd10e0"]}],
-        labels: ["Active","Closed","Current"],
+      var data = {datasets: [{data:  $scope.pieData,
+        backgroundColor: ["#f8e71c","#f5a800"]}],
+        labels: ["Active","Closed"],
       };
       var canvas = document.getElementById("myPieChart");
       var ctx = canvas.getContext("2d");
@@ -686,7 +714,7 @@ $scope.ApiDone= false;
    }
 
    $scope.renderBarChart = function() {
-   $scope.val = [44,11,22,33,55,33,11,22,44,33,0,0];
+   $scope.val =$scope.dateBarChartCount;
     console.log($scope.val);
     var data = {labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     datasets: [{
@@ -699,8 +727,8 @@ $scope.ApiDone= false;
  };
  var canvas = document.getElementById("myBarChart");
       var ctx = canvas.getContext("2d");
-      canvas.style.width = "300px";
-      canvas.style.height = "50px";
+      canvas.style.width = "900px";
+      canvas.style.height = "150px";
       var myNewChart = new Chart(ctx, {
         type: 'bar',
         data: data,

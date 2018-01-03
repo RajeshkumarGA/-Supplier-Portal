@@ -1,7 +1,27 @@
 app.controller('purchaseOrderController', ['$scope','sessionService','$rootScope','$http','$location','uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants','sessionService',
     function ($scope,sessionService, $rootScope,$http,$location,uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants,sessionService) {
-$rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
-$rootScope.userName = sessionService.get('UserName');
+  $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
+  $rootScope.userName = sessionService.get('UserName');
+  if(sessionService.get('tempisPRSEnabled')=='true'){
+    $rootScope.IsPRSEnabled=true;
+    }
+    else{
+      $rootScope.IsPRSEnabled=false;
+    }
+    if(sessionService.get('tempisFISEnabled')=='true'){
+      $rootScope.isFISEnabled=true;
+    }
+    else{
+      $rootScope.isFISEnabled=false;
+      
+    }
+    if(sessionService.get('tempisSubmissionNonPOInvoiceEnabled')=='true'){
+      $rootScope.isSubmissionNonPOInvoiceEnabled=true;
+    }
+    else{
+      $rootScope.isSubmissionNonPOInvoiceEnabled=false;
+      
+    }
 $scope.viewChange=function(getValue){
     if(getValue==0) $location.path('/PurchaseOrder'); 
     if(getValue==1) $location.path('/PurchaseOrderLine');
@@ -19,11 +39,12 @@ $scope.ApiDone= false;
     url: apiEndPoint,
     headers:{'Authorization':Headers}
  }).then(function(response){
+     // console.log(response);
     for (var i=0;i<response.data.length;i++){
         $scope.Arrival_date=response.data[i].datE_ENTERED.split('T');
         $scope.Approved_date=response.data[i].wanteD_RECEIPT_DATE.split('T');
         var obj = {
-                    "PO_Number":172140,
+                    "PO_Number":response.data[i].ordeR_NO,
                     "Supplier_Id":response.data[i].supplierId,
                     "Supplier_Name":"UNITED CENTRAL INDUSTRIAL SUPPLY",
                     "Total_Tax_Amount":response.data[i].totaL_TAX_AMT,
@@ -48,7 +69,35 @@ $scope.ApiDone= false;
                }
       $scope.dataset.push(obj);
     }
+    $scope.linesPerPage = sessionService.get("linesPerPage")
+    $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
     data($scope.dataset);
+    $scope.ApiDone= true;
+    var count = 0;
+    var count1 = 0;
+    var count2 = 0;
+    var count3 = 0;
+    for(var i=0;i<$scope.dataset.length;i++){
+      if($scope.dataset[i].Status=='Closed'){count++;}
+      else if ($scope.dataset[i].Status=='Planned') {count1++;}
+      else if ($scope.dataset[i].Status=='Received') {count2++;}
+      else{count3++;}
+    }
+    $scope.PieClosed = count;
+    $scope.pieData.push(count);
+    $scope.PiePlanned = count1;
+    $scope.pieData.push(count1);
+    $scope.PieReceived = count2;
+    $scope.pieData.push(count2);
+    $scope.PieReleased = count3;
+    $scope.pieData.push(count3);
+    var t = count+count1+count2+count3;
+    $scope.PieClosedPer = ((count*100)/t).toFixed(0);
+    $scope.PiePlannedPer = ((count1*100)/t).toFixed(0);
+    $scope.PieReceivedPer = ((count2*100)/t).toFixed(0);
+    $scope.PieReleasedPer = ((count3*100)/t).toFixed(0);
+    $scope.renderPieChart();
+    dateChart($scope.dataset);
 
  },function errorCallback(response){
     console.log(response);
@@ -86,8 +135,8 @@ $scope.ApiDone= false;
       $scope.gridApi = gridApi;
     },
     enablePinning: false,
-    paginationPageSizes: [10,20,75],
-    paginationPageSize: 10,
+    paginationPageSizes: [20,50,100],
+    // paginationPageSize: 10,
     columnDefs: [
       { field: 'PO_Number',  displayName: "PO Number", width: 150,pinnedLeft:true,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
@@ -104,34 +153,34 @@ $scope.ApiDone= false;
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:2},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-      { field: 'Total_Tax_Amount', maxWidth: 130, minWidth: 130 , displayName: "Total Tax Amount",enableHiding:false,enablePinning:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Total_Tax_Amount',cellFilter: 'currency:"USD " :2', maxWidth: 130, minWidth: 130 , displayName: "Total Tax Amount",enableHiding:false,enablePinning:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:3},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         } },
-      { field: 'Total_Net_Amount', maxWidth: 130, minWidth: 130 , displayName: "Total Net Amount",enableHiding:false,enablePinning:false, groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Total_Net_Amount',cellFilter: 'currency:"USD " :2', maxWidth: 130, minWidth: 130 , displayName: "Total Net Amount",enableHiding:false,enablePinning:false, groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:4},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field: 'Total_Gross_Amount', maxWidth: 130, minWidth: 130 , displayName: "Total Gross Amount",enableHiding:false,enablePinning:false, groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Total_Gross_Amount',cellFilter: 'currency:"USD " :2', maxWidth: 130, minWidth: 130 , displayName: "Total Gross Amount",enableHiding:false,enablePinning:false, groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:5},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field: 'Order_Total_Amount_Base',  displayName: "Order Total Amount Base", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Order_Total_Amount_Base',cellFilter: 'currency:"USD " :2',  displayName: "Order Total Amount Base", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-      { field: 'Total_Gross_Incl_Charge',  displayName: "Total Gross Incl Charge", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Total_Gross_Incl_Charge',cellFilter: 'currency:"USD " :2', displayName: "Total Gross Incl Charge", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:7},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-      { field: 'Invoice_Net_Amount',  displayName: "Invoice Net Amount", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Invoice_Net_Amount',cellFilter: 'currency:"USD " :2',  displayName: "Invoice Net Amount", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:8},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -146,12 +195,12 @@ $scope.ApiDone= false;
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:10},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-      { field: 'Date_Entered',  displayName: "Date Entered", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Date_Entered',  displayName: "Date Entered", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:11},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-      { field: 'Wanted_Receipt_Date',  displayName: "Wanted Receipt Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field: 'Wanted_Receipt_Date',  displayName: "Wanted Receipt Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:12},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -330,25 +379,24 @@ $scope.ApiDone= false;
   function data(data) {
     $scope.dateBarChart=[];
     $scope.gridOptions.data = data;
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.Date_Entered = new Date(val.Date_Entered);
-    });
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.Wanted_Receipt_Date = new Date(val.Wanted_Receipt_Date);
-    });
-
   }
    function dateChart(data){
      _.forEach(data, function (val) {
-      $scope.dateBarChart.push({year:val.requisitionDate.getFullYear(),month:val.requisitionDate.getMonth()});
+       var date_chart=new Date(val.Date_Entered);
+      $scope.dateBarChart.push({year:date_chart.getFullYear(),month:date_chart.getMonth()});
     });
+     var thisYear = new Date();
+    // console.log("year is ");
+    // console.log(thisYear.getFullYear());
     $scope.dateBarChartCount=[0,0,0,0,0,0,0,0,0,0,0,0];
     for (var i=0;i<$scope.dateBarChart.length;i++){
-      if($scope.dateBarChart[i].year==2017){
+      if($scope.dateBarChart[i].year==thisYear.getFullYear()){
+        console.log("in");
         var month = $scope.dateBarChart[i].month;
-        switch (month) {
+        switch (month+1) {
           case 1:
           $scope.dateBarChartCount[0]++;
+          console.log(month);
           break;
           case 2:
           $scope.dateBarChartCount[1]++;
@@ -380,6 +428,9 @@ $scope.ApiDone= false;
           case 11:
           $scope.dateBarChartCount[10]++;
           break;
+          case 12:
+          $scope.dateBarChartCount[11]++;
+          break;
         }
       }
     }
@@ -387,6 +438,7 @@ $scope.ApiDone= false;
   }
 
   $scope.filter = function(getValue){
+    alert(getValue);
     var myE0 = angular.element( document.querySelector( '.active' ) );
     myE0.removeClass('active');
     var myEl = angular.element( document.querySelector( '#POSTATUS_'+getValue) );
@@ -394,18 +446,19 @@ $scope.ApiDone= false;
     $scope.workingDatabase=$scope.dataset;
     switch (getValue){
       case 0:
+      angular.element( document.querySelector('#POSTATUS_0')).addClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
       data($scope.workingDatabase);
       break;
       case 1:
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
-          $scope.workingDatabase.push($scope.dataset[i]);
-
-      }
-      data($scope.workingDatabase);
-      break;
-      case 2:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
       $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
         if($scope.dataset[i].Status=='Closed')
@@ -414,7 +467,40 @@ $scope.ApiDone= false;
       }
       data($scope.workingDatabase);
       break;
+      case 2:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
+      $scope.workingDatabase=[];
+      for(var i=0;i<$scope.dataset.length;i++){
+        if($scope.dataset[i].Status=='Planned')
+          $scope.workingDatabase.push($scope.dataset[i]);
+
+      }
+      data($scope.workingDatabase);
+      break;
       case 3:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
+      $scope.workingDatabase=[];
+      for(var i=0;i<$scope.dataset.length;i++){
+        if($scope.dataset[i].Status=='Received')
+          $scope.workingDatabase.push($scope.dataset[i]);
+
+      }
+      data($scope.workingDatabase);
+      break;
+      case 4:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).addClass('active');
       $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
         if($scope.dataset[i].Status=='Released')
@@ -426,94 +512,62 @@ $scope.ApiDone= false;
 
     }
   }
-  $scope.selectdate=function(){
-    $scope.fdate= new Date($scope.Date_Enteredsearch);
-    $scope.edate= new Date($scope.Wanted_Receipt_Datesearch);
-    if($scope.Date_Enteredsearch && $scope.Wanted_Receipt_Datesearch){
-      $scope.workingDatabase=[];
-     /* var fdate= new Date($scope.Date_Enteredsearch);
-      if(fdate.getMonth()+1>=10){
-        strFDate=fdate.getFullYear()+'-'+parseInt(fdate.getMonth()+1)+'-'+fdate.getDate();
+   $scope.selectdate=function(){
+    $scope.fdate= new Date($scope.requisitionDatesearch);
+    $scope.edate= new Date($scope.requisitionDateEndsearch);
+    $scope.workingDatabase=[];
+    if($scope.requisitionDatesearch && $scope.requisitionDateEndsearch){
+      
+      var date;
+      for(var i=0;i<$scope.dataset.length;i++){
+         date = new Date($scope.dataset[i].Date_Entered);
+        if($scope.fdate-date<=0 && $scope.edate-date>=0 )
+          $scope.workingDatabase.push($scope.dataset[i]);
+        
+        }
+        data($scope.workingDatabase);
       }
       else{
-        strFDate=fdate.getFullYear()+'-0'+parseInt(fdate.getMonth()+1)+'-'+fdate.getDate();
-      }
-      var edate= new Date($scope.Wanted_Receipt_Datesearch);
-      if(edate.getMonth()+1>=10){
-        strEDate=edate.getFullYear()+'-'+parseInt(edate.getMonth()+1)+'-'+edate.getDate();
-      }
-      else{
-        strEDate=edate.getFullYear()+'-0'+parseInt(edate.getMonth()+1)+'-'+edate.getDate();
-      }
-      console.log(strEDate);
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Date_Entered.getMonth()+1>=10){
-          datasetDate_Entered=$scope.dataset[i].Date_Entered.getFullYear()+'-'+parseInt($scope.dataset[i].Date_Entered.getMonth()+1)+'-'+$scope.dataset[i].Date_Entered.getDate();
-        }
-        else{
-          datasetDate_Entered=$scope.dataset[i].Date_Entered.getFullYear()+'-'+parseInt($scope.dataset[i].Date_Entered.getMonth()+1)+'-'+$scope.dataset[i].Date_Entered.getDate();
-        }
-        if($scope.dataset[i].Wanted_Receipt_Date.getMonth()+1>=10){
-          datasetWanted_Receipt_Date=$scope.dataset[i].Wanted_Receipt_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Wanted_Receipt_Date.getMonth()+1)+'-'+$scope.dataset[i].Wanted_Receipt_Date.getDate();
-        }
-        else{
-          datasetWanted_Receipt_Date=$scope.dataset[i].Wanted_Receipt_Date.getFullYear()+'-'+parseInt($scope.dataset[i].Wanted_Receipt_Date.getMonth()+1)+'-'+$scope.dataset[i].Wanted_Receipt_Date.getDate();
-        }
-        if(datasetDate_Entered.match(strFDate) && datasetWanted_Receipt_Date.match(strEDate) ){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }*/
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].Date_Entered.getDate() && $scope.fdate.getMonth()-1<=$scope.dataset[i].Date_Entered.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].Date_Entered.getFullYear() && $scope.edate.getDate()>=$scope.dataset[i].Date_Entered.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].Date_Entered.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].Date_Entered.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-      data($scope.workingDatabase);
-    }
-  else{
-    if($scope.Date_Enteredsearch) {
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].Date_Entered.getDate() && $scope.fdate.getMonth()<=$scope.dataset[i].Date_Entered.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].Date_Entered.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-    }
-    else{
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.edate.getDate()>=$scope.dataset[i].Wanted_Receipt_Date.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].Wanted_Receipt_Date.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].Wanted_Receipt_Date.getFullYear()){
-           $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-    }
-   /* var date= new Date($scope.Date_Enteredsearch);
-    if(date.getMonth()+1>=10){
-      strFDate=date.getFullYear()+'-'+parseInt(date.getMonth()+1)+'-'+date.getDate();
-    }
-    else{
-      strFDate=date.getFullYear()+'-0'+parseInt(date.getMonth()+1)+'-'+date.getDate();
-    }
-    for(var i=0;i<$scope.dataset.length;i++){
-      if($scope.dataset[i].Date_Entered.getMonth()+1>=10){
-        datasetDate_Entered=$scope.dataset[i].Date_Entered.getFullYear()+'-'+parseInt($scope.dataset[i].Date_Entered.getMonth()+1)+'-'+$scope.dataset[i].Date_Entered.getDate();
-      }
-      else{
-        datasetDate_Entered=$scope.dataset[i].Date_Entered.getFullYear()+'-'+parseInt($scope.dataset[i].Date_Entered.getMonth()+1)+'-'+$scope.dataset[i].Date_Entered.getDate();
-      }
-      if(datasetDate_Entered.match(strFDate)){
-        $scope.workingDatabase.push($scope.dataset[i]);
-      }
-    }*/
-    data($scope.workingDatabase);
 
-  }
-    if(!$scope.Date_Enteredsearch && ! $scope.Wanted_Receipt_Datesearch){
-      $scope.workingDatabase=[];
+         if($scope.requisitionDatesearch){
+           
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Date_Entered);
+               if($scope.fdate-date<=0){
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            data($scope.workingDatabase);
+
+      }
+      else{
+          if($scope.requisitionDateEndsearch){
+            
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Date_Entered);
+               if($scope.edate-date>=0){
+                console.log('in');
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            console.log($scope.workingDatabase);
+            
+
+           }
+
+           data($scope.workingDatabase);
+      }
+     
+    }
+    
+    if(!$scope.requisitionDatesearch && ! $scope.latestOrderDatesearch){
+      
       $scope.workingDatabase=$scope.dataset;
       data($scope.workingDatabase);
     }
   }
- 
     //If DIV is visible it will be hidden and vice versa.
    $scope.toggle = true;
     $scope.$watch('toggle', function(){
@@ -522,52 +576,16 @@ $scope.ApiDone= false;
     })
   $scope.pieData=[];
   $scope.renderCharts = function(){
-    $scope.renderPieChart();
+    // $scope.renderPieChart();
     dateChart($scope.dataset);
-    
-   
-    var count = 0;
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
-          count++;
-      }
-      $scope.PieActive = count;
-      $scope.pieData.push(count);
-
-    var count1 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Closed')
-          count1++;
-      }
-       $scope.PieClosed = count1;
-       $scope.pieData.push(count1);
-
-    var count2 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
-          count2++;
-      }
-      $scope.PieCancelled = count2;
-      $scope.pieData.push(count2);
-
-      var t = count+count1+count2;
-      $scope.PieActivePer = ((count*100)/t).toFixed(0);
-      $scope.PieClosedPer = ((count1*100)/t).toFixed(0);
-      $scope.PieCancelledPer = ((count2*100)/t).toFixed(0);
-      // console.log("pie Data is");
-      // console.log($scope.pieData[0]);
 
   }
 
   $scope.renderPieChart = function(){
-     var PieTotal = parseInt($scope.PieActive) + parseInt($scope.PieClosed) + parseInt($scope.PieCancelled);
-     console.log(PieTotal);
-     // $scope.PieActivePer = ((33*100)/(33+231+44)).toFixed(0);
-     // $scope.PieClosedPer = ((231*100)/(33+231+44)).toFixed(0);
-     // $scope.PieCancelledPer = ((44*100)/(33+231+44)).toFixed(0);
-      var data = {datasets: [{data: [33,231,44],
-        backgroundColor: ["#f8e71c","#f5a800","#bd10e0"]}],
-        labels: ["Active","Closed","Current"],
+     // console.log($scope.pieData);
+      var data = {datasets: [{data: $scope.pieData,
+        backgroundColor: ["#f8e71c","#f5a800","#bd10e0","#95E71F"]}],
+        labels: ["Closed","Planned","Received","Released"],
       };
       var canvas = document.getElementById("myPieChart");
       var ctx = canvas.getContext("2d");
@@ -599,7 +617,7 @@ $scope.ApiDone= false;
 
    function renderBarChart(){
    $scope.val = $scope.dateBarChartCount;
-    //console.log($scope.val);
+    console.log($scope.val);
     var data = {labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     datasets: [{
      data:$scope.val ,
@@ -611,8 +629,8 @@ $scope.ApiDone= false;
  };
  var canvas = document.getElementById("myBarChart");
       var ctx = canvas.getContext("2d");
-      canvas.style.width = "300px";
-      canvas.style.height = "50px";
+     canvas.style.width = "900px";
+     canvas.style.height = "150px";
       var myNewChart = new Chart(ctx, {
         type: 'bar',
         data: data,

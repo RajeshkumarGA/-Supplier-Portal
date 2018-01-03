@@ -1,5 +1,5 @@
-app.controller('SupplierInvoiceController', ['$scope','sessionService', '$rootScope','$http', '$location','uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants',function ($scope,sessionService, $rootScope,$http,$location,uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants) {
-$rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
+app.controller('NonPOInvoicesController', ['$scope','sessionService', '$rootScope','$http', '$location','uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants',function ($scope,sessionService, $rootScope,$http,$location,uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants) {
+  $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
   $rootScope.userName = sessionService.get('UserName');
   if(sessionService.get('tempisPRSEnabled')=='true'){
     $rootScope.IsPRSEnabled=true;
@@ -21,6 +21,7 @@ $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
       $rootScope.isSubmissionNonPOInvoiceEnabled=false;
       
     }
+$scope.getValue = 1;
 $scope.viewChange=function(getValue){
     if(getValue==0) $location.path('/SupplierInvoice'); 
     if(getValue==1) $location.path('/NonPOInvoices');
@@ -28,12 +29,12 @@ $scope.viewChange=function(getValue){
 $scope.dataset =[];
 $scope.pieData = [];
 $scope.ApiDone= false;
- ifsSupplierID = sessionService.get('ifsSupplierNum');
+ ifsSupplierID =sessionService.get('ifsSupplierNum');
+ console.log(sessionService.get('ifsSupplierNum'));
  tokenType = sessionService.get('TokenType');
  accessToken = sessionService.get('AccessToken');
- apiEndPoint = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/invoice/getsupplierinvoices/'+ifsSupplierID;
+ apiEndPoint = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/nonpoinvoice/getnonposupplierinvoices/'+ifsSupplierID;
  var Headers = tokenType+' '+accessToken;
- console.log(Headers);
  $http({
     method:'GET',
     url: apiEndPoint,
@@ -41,30 +42,30 @@ $scope.ApiDone= false;
  }).then(function(response){
     console.log(response);
     for (var i=0;i<response.data.length;i++){
-        var due_date=response.data[i].dueDate.split('T');
-        var invoice_date=response.data[i].invoiceDate.split('T');
+      var invoiceDate=response.data[i].invoiceDate.split('T');
+      var createDate=response.data[i].createDate.split('T');
+      var updateDate=response.data[i].updateDate.split('T');
+      // var invoice_date=response.data[i].invoiceDate;
         var obj = {
-          "Invoice_Id":response.data[i].invoiceId,
           "Invoice_No":response.data[i].invoiceNo,
-          "Supplier_Id":response.data[i].supplier,
-          "Supplier_Name":response.data[i].supplierName,
+          "Supplier_Id":response.data[i].supplierID,
           "Company":response.data[i].company,
-          "PO_Reference":response.data[i].poReference,
-          "Payment_Date":response.data[i].paymentDate,
-          "Invoice_Date":invoice_date[0],
-          "Due_Date":due_date[0],
-          "Gross_Amount":response.data[i].grossAmount,
-          "Net_Amount":response.data[i].netAmount,
-          "Tax_Amount":response.data[i].taxAmount,
-          "Payment_Terms_Description":response.data[i].paymentTermsDesc,
-          "Payment_Reference":response.data[i].paymentReference,
           "Currency":response.data[i].currency,
+          "Invoice_Date":invoiceDate[0],
+          "Invoice_Amount":response.data[i].invoiceAmount,
+          "Comments":response.data[i].note,
+          "No_of_Attachments":response.data[i].noOfAttachments,
+          "File_Exists":response.data[i].fileExists,
+          "Created_Date":createDate[0],
+          "Updated_Date":updateDate[0],
           "Status":response.data[i].status
            
                }
       $scope.dataset.push(obj);
+      $scope.linesPerPage = sessionService.get("linesPerPage")
+      $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
     }
-    data($scope.dataset);
+   data($scope.dataset);
     $scope.ApiDone= true;
     var count = 0;
     var count1 = 0;
@@ -81,8 +82,6 @@ $scope.ApiDone= false;
     $scope.PiePostedAuthPer = ((count1*100)/t).toFixed(0);
     $scope.renderPieChart();
     dateChart($scope.dataset);
-    $scope.linesPerPage = sessionService.get("linesPerPage")
-    $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
  },function errorCallback(response){
     console.log(response);
  });  
@@ -129,73 +128,61 @@ $scope.ApiDone= false;
         // filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
         //          options:[{index:0},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         // }},
-        { field: 'Invoice_Id', displayName: "Invoice No", width: 150,pinnedLeft:true,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'Invoice_No', displayName: "Invoice No", width: 150,pinnedLeft:true,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:1},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         },cellTemplate:
-          '<a  ng-click="grid.appScope.supplierDetails(row.entity)" class="ui-grid-cell-contents" style="color:red">{{COL_FIELD}}</a>'},
+          '<a  ng-click="grid.appScope.supplierDetails(row.entity)" class="ui-grid-cell-contents" style="color:red">{{COL_FIELD}}</a>'
+        },
+        
         { field: 'Supplier_Id', displayName: "Supplier Id", width: 150,pinnedLeft:true,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:2},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
-        }},
-        { field: 'Supplier_Name', displayName: "Supplier Name", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
-        filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
-        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
-                 options:[{index:3},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
         { field: 'Company', displayName:"Company",width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:4},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'PO_Reference',  displayName: "PO Reference", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'Currency',  displayName: "Currency", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:4},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'Payment_Date',  displayName: "Payment Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
+        { field: 'Invoice_Date',  displayName: "Invoice Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:5},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'Invoice_Date',  displayName: "Invoice Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
+        { field: 'Invoice_Amount',  displayName: "Invoice Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'Due_Date',  displayName: "Due Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
-        filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
-        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
-                 options:[{index:7},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
-        }},
-        { field: 'Gross_Amount',  displayName: "Gross Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
-        filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
-        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
-                 options:[{index:8},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
-        }},
-        { field: 'Net_Amount',  displayName: "Net Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
-        filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
-        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
-                 options:[{index:9},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
-        }},
-        { field: 'Tax_Amount',  displayName: "Tax Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+       
+        { field: 'Comments',  displayName: "Comments", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:10},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'Payment_Terms_Description',  displayName: "Payment Terms Description", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'No_of_Attachments',  displayName: "No of Attachments", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:11},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'Payment_Reference',  displayName: "Payment Reference", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'File_Exists',  displayName: "File Exists", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:12},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }},
-        { field: 'Currency',  displayName: "Currency", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+        { field: 'Created_Date',  displayName: "Created Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
+        filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:13},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }},
+        { field: 'Updated_Date',  displayName: "Updated Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:13},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -216,22 +203,22 @@ $scope.ApiDone= false;
     $scope.supplierDetails =function(getObject){
       sessionService.destroy('invoiceDetails');
       sessionService.set('invoiceDetails',JSON.stringify(getObject));
-      $location.path('/SupplierInvoiceDetails');
+      $location.path('/NonPoInvoiceDetails');
     }
     $scope.columnArray=[
-        {'id':0,'title':'Supplier_Name','value':false},
-        {'id':1,'title':'Company','value':false},
-        {'id':2,'title':'PO_Reference','value':false},
-        {'id':3,'title':'Payment_Date','value':false},
-        {'id':4,'title':'Invoice_Date','value':false},
-        {'id':5,'title':'Due_Date','value':false},
-        {'id':6,'title':'Gross_Amount','value':false},
-        {'id':7,'title':'Net_Amount','value':false},
-        {'id':8,'title':'Tax_Amount','value':false},
-        {'id':9,'title':'Payment_Terms_Description','value':false},
-        {'id':10,'title':'Payment_Reference','value':false},
-        {'id':11,'title':'Currency','value':false},
-        {'id':12,'title':'Status','value':false}
+        // {'id':0,'title':'Invoice_Id','value':false},
+        // {'id':1,'title':'Invoice_No','value':false},
+        // {'id':2,'title':'Supplier_Id','value':false},
+        {'id':0,'title':'Company','value':false},
+        {'id':1,'title':'Currency','value':false},
+        {'id':2,'title':'Invoice_Date','value':false},
+        {'id':3,'title':'Invoice_Amount','value':false},
+        {'id':4,'title':'Comments','value':false},
+        {'id':5,'title':'No_of_Attachments','value':false},
+        {'id':6,'title':'File_Exists','value':false},
+        {'id':7,'title':'Created_Date','value':false},
+        {'id':8,'title':'Updated_Date','value':false},
+        {'id':9,'title':'Status','value':false}
     ];
     $scope.hideColumn=function(){
       for(var i=0;i<$scope.columnArray.length;i++){
@@ -327,6 +314,7 @@ $scope.ApiDone= false;
   };
 
   data($scope.dataset);
+  data($scope.dataset);
   function data(data) {
     $scope.dateBarChart=[];
     $scope.gridOptions.data = data;
@@ -337,8 +325,7 @@ $scope.ApiDone= false;
        var date_chart=new Date(val.Invoice_Date);
        $scope.dateBarChart.push({year:date_chart.getFullYear(),month:date_chart.getMonth()});
     });
-
-     var thisYear = new Date();
+    var thisYear = new Date();
     // console.log("year is ");
     // console.log(thisYear.getFullYear());
     $scope.dateBarChartCount=[0,0,0,0,0,0,0,0,0,0,0,0];
@@ -388,14 +375,16 @@ $scope.ApiDone= false;
     renderBarChart();
   }
   
-   
+  
+  
+
   $scope.filter = function(getValue){
     var myE0 = angular.element( document.querySelector( '.active' ) );
     myE0.removeClass('active');
     var myEl = angular.element( document.querySelector( '#POSTATUS_'+getValue) );
     myEl.addClass('active');
     $scope.workingDatabase=$scope.dataset;
-    switch (getValue){
+   switch (getValue){
       case 0:
       angular.element( document.querySelector('#POSTATUS_0')).addClass('active'); 
       angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
@@ -429,7 +418,7 @@ $scope.ApiDone= false;
      
     }
   }
-  $scope.selectdate=function(){
+   $scope.selectdate=function(){
     $scope.fdate= new Date($scope.requisitionDatesearch);
     $scope.edate= new Date($scope.requisitionDateEndsearch);
     $scope.workingDatabase=[];
@@ -595,13 +584,13 @@ $scope.ApiDone= false;
                 var strInvoice_No = $scope.dataset[i].Invoice_No.toString();
                 var strCompany = $scope.dataset[i].Company.toString();
                 var strPO_Reference = $scope.dataset[i].PO_Reference.toString();
-                var strSupplier_Name = $scope.dataset[i].Supplier_Name.toString();
+                // var strPayment_Date = $scope.dataset[i].Payment_Date.toString();
                 var strInvoice_Date = $scope.dataset[i].Invoice_Date.toString();
                 var strDue_Date = $scope.dataset[i].Due_Date.toString();
                 var strGross_Amount = $scope.dataset[i].Gross_Amount.toString();
                 var strNet_Amount = $scope.dataset[i].Net_Amount.toString();
                 var strTax_Amount = $scope.dataset[i].Tax_Amount.toString();
-                // var strPayment_Terms_Description = $scope.dataset[i].Payment_Terms_Description.toString();
+                var strPayment_Terms_Description = $scope.dataset[i].Payment_Terms_Description.toString();
                 // var strPayment_Reference = $scope.dataset[i].Payment_Reference.toString();
                 var strCurrency = $scope.dataset[i].Currency.toString();
                 var strStatus = $scope.dataset[i].Status .toString();
@@ -611,13 +600,13 @@ $scope.ApiDone= false;
                 strInvoice_No.match(strSearchKeywords) ||
                 strCompany.match(strSearchKeywords) ||
                 strPO_Reference.match(strSearchKeywords) ||
-                strSupplier_Name.match(strSearchKeywords) ||
+                // strPayment_Date.match(strSearchKeywords) ||
                 strInvoice_Date.match(strSearchKeywords) ||
                 strDue_Date.match(strSearchKeywords) ||
                 strGross_Amount.match(strSearchKeywords) ||
                 strNet_Amount.match(strSearchKeywords) ||
                 strTax_Amount.match(strSearchKeywords) ||
-                // strPayment_Terms_Description.match(strSearchKeywords) ||
+                strPayment_Terms_Description.match(strSearchKeywords) ||
                 // strPayment_Reference.match(strSearchKeywords) ||
                 strCurrency.match(strSearchKeywords) ||
                 strStatus.match(strSearchKeywords)

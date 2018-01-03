@@ -1,137 +1,330 @@
 <section ng-controller='MyDashboardController' style="background-color:#F6FBFB">
-	<div class="container">
+	<div class="container" style="">
 		<p style="font-family:'Lato', sans-serif;font-size:24px;color:#4a4a4a;letter-spacing:0;text-align:left;margin-top:3%;margin-bottom:-3%;">My Dashboard</p>
-			<div class="col-lg-12" style="background-color:#fff;margin-top:5%;">
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
-						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left"> Recent Purchase Requisitions</p>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
-						
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
-						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/PurchaseRequisitions" class="nav-content">View All</a>
-						</button>
-					</div>
-	
-				 <div class="col-lg-12 col-md-12 ">
-				 	<div class="" style="margin-top:1%">
-  					<div id="grid11" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-pinning class="myGridDashboard" ></div>
-  				</div>
-					
-			     </div>
-			  </div>
+		<div class="col-lg-12 col-md-12" style="background-color:#fff;margin-top:5%;" ng-show="UnpaidInvoicesEnabled">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+				<p style="font-family:'Lato', sans-serif;font-size:20px;color:#4a4a4a;letter-spacing:0;text-align:left"><b>Unpaid Invoices</b></p>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" ng-show="SupplierInvoiceMonthFilter">
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate2(7)">Week</button>
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate2(30)">Month</button>
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate2(90)">Last 3 Months</button>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
+				<a class="btn" type="button" style="background-color:#6DCA67;border:#6DCA67;border-radius:2px;color:#fff;height:30px;width:100px;" href="#!/SupplierInvoice">View All</a>
+				
+				<span data-toggle='modal' data-target='#hideColumnModalInvoices' class="glyphicon glyphicon-cog"></span>
+			</div>
+			<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+				<div class="col-lg-6 col-md-6" style="border-right: 4px solid white;height:100%;" >
+					<div style="margin-top:2%;">
+						<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">{{UnpaidInvoicesCount | number}} </p>
 
+						<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Unpaid Invoices </p>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6" style="margin-top:1%;">
+					<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">{{AmountUnpaid| number}}</p>
+					<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">Amount Unpaid</p>
+				</div>
+			</div>
+			<div class="col-lg-12 col-md-12 ">
+				<div class="" style="margin-top:1%">
+					<div id="grid2" ui-grid="gridOptions2" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+				</div>
+			</div>			 
+		</div>
 
-			<div class="col-lg-12" style="background-color:#fff;margin-top:5%;">
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
-						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left"> Recent Purchase Orders</p>
-						
+		<div id="hideColumnModalInvoices" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content" style="width:630px;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Manage visibality of Unpaid Invoices Columns</h4>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
-						
+					<div class="modal-body clearfix" style="">
+						<div class="col-md-4 col-lg-4">
+							<div class="" style="display:inline-block;">
+								<h3>visible  Columns</h3>
+								<p ng-repeat='data in columnArray2 track by $index' ng-if='$index<7' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}" checked disabled>{{data.title}}</p>
+							</div>
+						</div>
+						<div class="col-md-8 col-lg-8" style="">
+							<h3 style="text-align:center;">Hidden Columns</h3>
+							<div style="display:inline-block;margin-right:10%;" >
+								<p ng-repeat='data in columnArray2 track by $index' ng-if='$index>6 && $index<12'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+
+							<div style="display:inline-block;" >
+								<p ng-repeat='data in columnArray2 track by $index' ng-if='$index>11'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+						</div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
-						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/PurchaseOrder" class="nav-content">View All</a>
-						</button>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click='hideColumnInvoices();updateUnpaidInvoices()'>Apply Filter</button>
+						<!--  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click='resetAllColumns()'>Reset Filter</button> -->
 					</div>
-	
-				  <div class="col-lg-12 col-md-12 ">
-				 	<div class="" style="margin-top:1%">
-  						<div id="grid1" ui-grid="gridOptions1" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
-  				  </div>
+				</div>
 			</div>
 		</div>
-		
-		<div class="col-lg-12" style="background-color:#fff;margin-top:5%;">
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
-						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left">Unpaid Invoices</p>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
-						<!-- <ul class="pagination" style="">
-						    <li id="POSTATUS_0" class="active"><a ng-click="filter(0)">All</a></li>
-						    <li id="POSTATUS_1" class=""><a ng-click="filter(1)">Paid</a></li>
-						    <li id="POSTATUS_2" class=""><a ng-click="filter(2)">Unpaid</a></li>
-						    <li id="POSTATUS_2" class=""><a ng-click="filter(3)">Current</a></li>
-						 </ul> -->
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
-						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/SupplierInvoice" class="nav-content">View All</a>
-						</button>
-					</div>
-					<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
-						<div class="col-lg-6 col-md-6" style="border-left:#fff;border-width:2px;margin-top:1%;" >
-							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">03</p>
-							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Unpaid Invoices</p>
-						</div>
-						<div class="col-lg-6 col-md-6" style="margin-top:1%;">
-							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">2,98,050</p>
-							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">Amount Unpaid</p>
-						</div>
-					</div>
-					<div class="col-lg-12 col-md-12 ">
-				 	<div class="" style="margin-top:1%">
-  						<div id="grid2" ui-grid="gridOptions2" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
-  				  </div>
+
+		<div class="col-lg-12" style="background-color:#fff;margin-top:5%;" ng-show="PurchaseRequistionEnabled">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+				<p style="font-family:'Lato', sans-serif;font-size:20px;color:#4a4a4a;letter-spacing:0;text-align:left"><b>Recent Purchase Requisitions</b></p>
 			</div>
-	
-				 
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;">
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate(7)">Week</button>
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate(30)">Month</button>
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate(090)">Last 3 Months</button>
 			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;" >
+				<a class="btn" type="button" style="background-color:#6DCA67;border:#6DCA67;border-radius:2px;color:#fff;height:30px;width:100px;" href="#!/PurchaseRequisitions">View All</a>
+				<!-- <button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/PurchaseRequisitions" style="color:#fff;">View All</a>
+				</button> -->
+				<span data-toggle='modal' data-target='#hideColumnModal' class="glyphicon glyphicon-cog"></span>
+			</div>
+
+			<div class="col-lg-12 col-md-12 ">
+				<div class="" style="margin-top:1%">
+					<div id="grid11" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning  class="myGridDashboard" ></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="hideColumnModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content" style="width:1100px;margin-left:-40%;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Manage visibality of PurchaseRequisitions Columns</h4>
+					</div>
+					<div class="modal-body clearfix" style="">
+						<div class="col-md-2 col-lg-2">
+							<div class="" style="width:210px;display:inline-block;">
+								<h3>Visibale columns</h3>
+								<p ng-repeat='data in columnArray track by $index' ng-if='$index<7' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}" checked disabled>{{data.title}}</p>
+							</div>
+						</div>
+						<div class="col-md-10 col-lg-10" style="margin-left:5%;margin-right:-5%;">
+							<h3 style="text-align:center;">Hidden Columns</h3>
+							<div style="width:210px;display:inline-block;" >
+								<p ng-repeat='data in columnArray track by $index' ng-if='$index>6 && $index<16'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+							<div style="width:210px;display:inline-block;" >
+								<p ng-repeat='data in columnArray track by $index' ng-if='$index>15 && $index<25'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+							<div style="width:210px;display:inline-block;">
+								<p ng-repeat='data in columnArray track by $index' ng-if='$index>24 && $index<34'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+							<div style="width:210px;display:inline-block;" >
+								<p ng-repeat='data in columnArray track by $index' ng-if='$index>33'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click='hideColumn();updatePurchaseRequisitions()'>Apply Filter</button>
+						<!--  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click='resetAllColumns()'>Reset Filter</button> -->
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="col-lg-12 col-md-12 col-sm-12" style="background-color:#fff;margin-top:5%;" ng-show="RecentPurchaseOrderEnabled">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+				<p style="font-family:'Lato', sans-serif;font-size:20px;color:#4a4a4a;letter-spacing:0;text-align:left"><b>Recent Purchase Orders</b></p>
+
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" ng-show="PurchaseOrderMonthsFilter">
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate1(7)">Week</button>
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate1(30)">Month</button>
+				<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate1(90)">Last 3 Months</button>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-20%;">
+				<a class="btn" type="button" style="background-color:#6DCA67;border:#6DCA67;border-radius:2px;color:#fff;height:30px;width:100px;" href="#!/PurchaseOrder">View All</a>
+				<!-- <button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/PurchaseOrder" style="color:#fff;">View All</a>
+				</button> -->
+				<span data-toggle='modal' data-target='#hideColumnModalOrders' class="glyphicon glyphicon-cog"></span>
+			</div>
+
+			<div class="col-lg-12 col-md-12 ">
+				<div class="" style="margin-top:1%">
+					<div id="grid1" ui-grid="gridOptions1" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="hideColumnModalOrders" class="modal fade" role="dialog">
+	  		<div class="modal-dialog">
+	  			<div class="modal-content" style="width:1100px;margin-left:-40%;">
+	  				<div class="modal-header">
+	  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+	  					<h4 class="modal-title">Manage visibality of Purchase Orders Columns</h4>
+	  				</div>
+	  				<div class="modal-body clearfix" style="">
+	  					<div class="col-md-4 col-lg-4">
+	  						<div class="" style="width:210px;display:inline-block;">
+	  							<h3>Default visibale</h3>
+	  							<p ng-repeat='data in columnArray1 track by $index' ng-if='$index<7' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+	  						</div>
+	  					</div>
+	  					<div class="col-md-8 col-lg-8">
+	  						<h3 style="text-align:center;">Hidden Columns</h3>
+	  						<div style="display:inline-block;margin-right:10%" >
+	  							<p ng-repeat='data in columnArray1 track by $index' ng-if='$index>6 && $index<12'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+	  						</div>
+	  						<div style="display:inline-block;margin-right:10%" >
+	  							<p ng-repeat='data in columnArray1 track by $index' ng-if='$index>11 && $index<17'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+	  						</div>
+				              <div style="display:inline-block;" >
+				                <p ng-repeat='data in columnArray1 track by $index' ng-if='$index>16'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+				              </div>
+	  					</div>
+	  				</div>
+	  				<div class="modal-footer">
+	  					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click='hideColumnOrders();updatePurchaseOrder()'>Apply Filter</button>
+	           			<!--  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click='resetAllColumns()'>Reset Filter</button> -->
+	  				</div>
+	  			</div>
+	  		</div>
+	  	</div>
 
 		<div class="col-lg-12 col-md-12" style="background-color:#F6FBFB;margin-top:5%;">
 			<div class="col-lg-6 col-md-6" style="background-color:#fff;margin-left:-1%;">
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
-						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left">Shipments</p>
-						
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+					<p style="font-family:'Lato', sans-serif;font-size:20px;color:#4a4a4a;letter-spacing:0;text-align:left"><b>Shipments</b></p>	
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-show="ShipmentsMonthFilter" style="margin-top:-2%;margin-bottom:-5%;">
+					<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate3(7)">Week</button>
+					<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate3(30)">Month</button>
+					<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate3(90)">Last 3 Months</button>	
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" style="margin-top:-2%;margin-bottom:-5%;float:right;margin-right:-2%;">
+					<a class="btn" type="button" style="background-color:#6DCA67;border:#6DCA67;border-radius:2px;color:#fff;height:25px;width:80px;padding:2px;" href="#!/SupplierShipment">View All</a>
+					<!-- <button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:25px;width:80px;"><a href="#!/SupplierShipment" style="color:#fff;">View All</a>
+					</button> -->
+					<span data-toggle='modal' data-target='#hideColumnModalShipments' class="glyphicon glyphicon-cog"></span>
+				</div>
+				<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+					<div style="margin-top:2%;">
+						<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">{{NoOfShipments | number}}</p>
+						<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Shipments</p>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
-						
+				</div>
+	
+				<div class="col-lg-12 col-md-12 ">
+				 	<div class="" style="margin-top:1%">
+						<div id="grid3" ui-grid="gridOptions3" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-8%;">
-						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/SupplierShipment" class="nav-content">View All</a>
-						</button>
-					</div>
-					<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+  				</div>
+			</div>
+
+			<div class="col-lg-6 col-md-6" style="background-color:#fff;margin-right:-2%;margin-left:2%;">
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
+					<p style="font-family:'Lato', sans-serif;font-size:20px;color:#4a4a4a;letter-spacing:0;text-align:left"><b>Payments</b></p>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:-2%;margin-bottom:-5%;" ng-show="SupplierPaymentsMonthFilter">
+					<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate4(7)">Week</button>
+					<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate4(30)">Month</button>
+					<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;" ng-click="selectdate4(90)">Last 3 Months</button>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" style="margin-top:-2%;margin-bottom:-5%;float:right;margin-right:-2%;">
+					<a class="btn" type="button" style="background-color:#6DCA67;border:#6DCA67;border-radius:2px;color:#fff;height:25px;width:80px;padding:2px;" href="#!/Payments">View All</a>
+					<!-- <button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:25px;width:80px;"><a href="#!/Payments" style="color:#fff;">View All</a>
+					</button> -->
+					<span data-toggle='modal' data-target='#hideColumnModalPayments' class="glyphicon glyphicon-cog"></span>
+				</div>
+				<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
+					<div class="col-lg-5 col-md-5" style="border-right: 4px solid white;height:100%;">
 						<div style="margin-top:2%;">
-							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:center;vertical-align: middle;margin-left:30%;">03</p>
-							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align: center;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Shipments</p>
+						<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:left;vertical-align: middle;margin-left:2%;">{{NoOfPayments | number}}</p>
+						<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align:left;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Payments</p>
 						</div>
 					</div>
-	
-				  <div class="col-lg-12 col-md-12 ">
-				 	<div class="" style="margin-top:1%">
-  						<div id="grid3" ui-grid="gridOptions3" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
-  				  </div>
-			</div>
-		</div>
-		<div class="col-lg-6 col-md-6" style="background-color:#fff;margin-left:2%;margin-right:-2%">
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;" >
-						<p style="font-family:'Lato', sans-serif;font-size:16px;color:#4a4a4a;letter-spacing:0;text-align:left"> Payments</p>
-						
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-5%;margin-bottom:-5%;">
-						
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" style="margin-top:-3%;margin-bottom:-5%;float:right;margin-right:-8%;">
-						<button style="background-color:#6DCA67;border:none;border-radius:2px;color:#fff;height:30px;width:100px;"><a href="#!/Payments" class="nav-content">View All</a>
-						</button>
-					</div>
-					<div class="col-lg-12 col-md-12" style="opacity:0.5;background:#294874;height:50px;margin-top:2%;">
-						<div style="margin-top:2%;">
-							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;text-align:left;vertical-align: middle;margin-left:2%;">03</p>
-							<p style="display:inline;font-size:14px;color:#ffffff;letter-spacing:0;text-align:left;vertical-align: middle;font-family:'Lato', sans-serif;">No. of  Payments</p>
-							<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;vertical-align: middle;text-align:right;margin-left: 13%;">67,00,900</p>
-							<p style="display:inline;vertical-align: middle;font-size:14px;color:#ffffff;letter-spacing:0;text-align:right;font-family:'Lato', sans-serif;">Amount Received</p>
+					<div class="col-lg-7 col-md-7">
+						<div style="margin-top:2%;margin-left:-18%;">
+						<p style="display:inline;font-size:32px;color:#ffffff;letter-spacing:0;line-height:22px;vertical-align: middle;text-align:right;margin-left: 13%;">{{AmountReceived | number}}</p>
+						<p style="display:inline;vertical-align: middle;font-size:14px;color:#ffffff;letter-spacing:0;text-align:right;font-family:'Lato', sans-serif;">Amount Received</p>
+
 						</div>
 					</div>
-	
-				  <div class="col-lg-12 col-md-12 ">
-				 	<div class="" style="margin-top:1%">
-  						<div id="grid4" ui-grid="gridOptions4" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
-  				  </div>
+				</div>
+
+				<div class="col-lg-12 col-md-12 ">
+					<div class="" style="margin-top:1%">
+					<div id="grid4" ui-grid="gridOptions4" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning class="myGridDashboard" ></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div id="hideColumnModalShipments" class="modal fade" role="dialog">
+  			<div class="modal-dialog">
+	  			<div class="modal-content" style="width:1100px;margin-left:-40%;">
+	  				<div class="modal-header">
+	  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+	  					<h4 class="modal-title">Manage visibality of Shipments Columns</h4>
+	  				</div>
+	  				<div class="modal-body clearfix" style="">
+	  					<div class="col-md-4 col-lg-4">
+	  						<div class="" style="width:210px;display:inline-block;">
+	  							<h3>Default visibale</h3>
+	  							<p ng-repeat='data in columnArray3 track by $index' ng-if='$index<4' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+	  						</div>
+	  					</div>
+	  					<div class="col-md-8 col-lg-8">
+	  						<h3 style="text-align:center;">Hidden Columns</h3>
+	  						<div style="display:inline-block;margin-right:10%" >
+	  							<p ng-repeat='data in columnArray3 track by $index' ng-if='$index>3 && $index<15'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+	  						</div>
+	  						<div style="display:inline-block;margin-right:10%" >
+	  							<p ng-repeat='data in columnArray3 track by $index' ng-if='$index>14 && $index<25'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+	  						</div>
+							<div style="display:inline-block;" >
+								<p ng-repeat='data in columnArray3 track by $index' ng-if='$index>24'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+	  					</div>
+	  				</div>
+	  				<div class="modal-footer">
+	  					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click='hideColumnShipments();updateShipments()'>Apply Filter</button>
+	           			<!--  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click='resetAllColumns()'>Reset Filter</button> -->
+	  				</div>
+  				</div>
+  			</div>
+  		</div>
+
+
+		<div id="hideColumnModalPayments" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content" style="width:1100px;margin-left:-40%;">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Manage visibality of Payments Columns</h4>
+					</div>
+					<div class="modal-body clearfix" style="">
+						<div class="col-md-4 col-lg-4">
+							<div class="" style="width:210px;display:inline-block;">
+								<h3>Default visibale</h3>
+								<p ng-repeat='data in columnArray4 track by $index' ng-if='$index<4' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+						</div>
+						<div class="col-md-8 col-lg-8">
+							<h3 style="text-align:center;">Hidden Columns</h3>
+							<div style="display:inline-block;margin-right:10%" >
+								<p ng-repeat='data in columnArray4 track by $index' ng-if='$index>3 && $index<10'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+							<div style="display:inline-block;" >
+								<p ng-repeat='data in columnArray4 track by $index' ng-if='$index>9'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click='hideColumnPayments();updatePayments()'>Apply Filter</button>
+						<!--  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click='resetAllColumns()'>Reset Filter</button> -->
+					</div>
+				</div>
 			</div>
 		</div>
-			
-		</div>
-		
 	</div>
 </section>

@@ -1,40 +1,48 @@
  <!--  <link rel="styleSheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.css"/> -->
-  <section ng-controller="SupplierShipmentController" style="background-color: #fafbfc;">
+  <section ng-controller="NonPOInvoicesController" style="background-color: #fafbfc;">
   	<div class="controller">
 		  	<div class="row">
-			  	<div class="col-lg-10"><p style="font-family:'Lato', sans-serif;font-size:24px;color:#4a4a4a;letter-spacing:0;text-align:left;">Supplier Shipment</p> </div>
-			  	<div class="col-lg-2" style="float:right;">
-			  	     <button ng-click="toggle = !toggle" class="btn-hide">
-          					<span ng-show ="toggle" class="glyphicon glyphicon-eye-close" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
-          					<span ng-show ="!toggle" class="glyphicon glyphicon-eye-open" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
-          					{{toggleText}}
-        			</button>
+			  	  <div class="col-lg-2">
+               <select  ng-change='viewChange(viewCount)' ng-model='viewCount' ng-init='viewCount=1' style="border:none;background-color: #fafbfc;font-family: 'Lato', sans-serif;font-size:24px;color:#4a4a4a;text-align-last:left;direction: rtl; ">
+                   <option ng-value='0'>PO Invoice</option>
+                   <option ng-value='1'>Non PO Invoice</option>
+                </select>
+            </div>
+			  	<div class="col-lg-4 col-md-4" style="float:right;">
+               <button ng-click="toggle = !toggle" class="btn-hide" style="margin-top:-1%;float:right;">
+                    <span ng-show ="toggle" class="glyphicon glyphicon-eye-close" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
+                    <span ng-show ="!toggle" class="glyphicon glyphicon-eye-open" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
+                    {{toggleText}}
+              </button>
+               <button class="btn-custom-k" style="background:#294874;float:right;"><a href="#!/CreateNonPoInvoice" style="color:#fff">Create Non Po Invoice</a></button>
+			  	     
+             
 			  	</div>
 		  	</div>	    
   			<div ng-show ="toggle" class="row" style="display:table;width:100%;background-color:#294874;opacity:0.5;margin-left:.2%" data-ng-init="renderCharts()">
   				<div class="col-lg-3 col-md-3 col-sm-12">
   					<div class="chartheader">
-  						Supplier Shipment by Status
+  						Supplier Invoice by Status
   					</div>
-  					<div class="col-md-6 col-lg-6" >
+  		 <div class="col-md-6 col-lg-6" >
               <div style="margin-left:-13%;">
                 <canvas id="myPieChart"></canvas>
               </div>
             </div>
             <div class="col-md-6 col-lg-6">
-              <div style="color:#ffffff;margin-left:-20%;margin-right:-5%;margin-top:25%;">
+              <div style="color:#ffffff;margin-left:-15%;margin-right:-10%;margin-top:25%;">
               <table style=" border: 1px solid white; width:115%;">
                 <tr style=" border: 1px solid white;">
                   <td style=" border: 1px solid white;"><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#bd10e0" /></svg></td>
-                  <td style=" border: 1px solid white;">CANCELLED</td>
-                  <td style=" border: 1px solid white;">{{PieCancelled}}</td>
-                  <td style=" border: 1px solid white;">{{PieCancelledPer}}%</td>
+                  <td style=" border: 1px solid white;">PAIDPOSTED</td>
+                  <td style=" border: 1px solid white;">{{PiePaidPosted}}</td>
+                  <td style=" border: 1px solid white;">{{PiePaidPostedPer}}%</td>
                 </tr>
                 <tr style=" border: 1px solid white;background:none">
                   <td style=" border: 1px solid white;"><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f8e71c" /></svg></td>
-                  <td style=" border: 1px solid white;">RECEIVED</td>
-                  <td style=" border: 1px solid white;">{{PieReceived}}</td>
-                  <td style=" border: 1px solid white;">{{PieReceivedPer}}%</td>
+                  <td style=" border: 1px solid white;">POSTEDAUTH</td>
+                  <td style=" border: 1px solid white;">{{PiePostedAuth}}</td>
+                  <td style=" border: 1px solid white;">{{PiePostedAuthPer}}%</td>
                 </tr>
               </table>
             </div>
@@ -42,7 +50,7 @@
             </div>
   				</div>
   				<div class="col-lg-9 col-md-6 col-sm-12" >
-  					 <div class="vl" style="margin-top:-1%; height:210px;margin-bottom:-210px"></div>
+  					<div class="vl" style="margin-top:-1%; height:210px;margin-bottom:-210px"></div>
             <div class="chartheader" style="margin-top:1%;">
               Month Over Month Distribution - 2017
             </div>
@@ -50,6 +58,8 @@
               <canvas id="myBarChart"></canvas>
             </div>
             <div id="js-legend" class="chart-legend"></div>
+
+
   				</div>	
   		
   		</div>
@@ -59,12 +69,12 @@
   			<div class="row">
   			<div class="col-md-4 col-lg-4 col-sm-12 ">
   				<ul class="pagination">
-  					<li><a disabled class="filter_style" style="color:#4a4a4a;">Shipment Status : </a></li>
-  					<li id="POSTATUS_0" class="active" style="width:40px;"><a ng-click="filter(0)" class="filter_style">All</a></li>
-  					<li id="POSTATUS_1" class="" style="width:30px;"><a ng-click="filter(1)" class="filter_style">Cancelled</a></li>
-  					<li id="POSTATUS_2" class="" style="width:30px;"><a class="filter_style" ng-click="filter(2)">Received</a></li>
-  					
-  				</ul>
+            <li><a disabled class="filter_style" style="color:#4a4a4a;">Invoice Status : </a></li>
+            <li id="POSTATUS_0" class="active" style="width:40px;"><a ng-click="filter(0)" class="filter_style">All</a></li>
+            <li id="POSTATUS_1" class="" style="width:40px;"><a ng-click="filter(1)" class="filter_style">PaidPosted</a></li>
+            <li id="POSTATUS_2" class="" style="width:40px;"><a class="filter_style" ng-click="filter(2)">PostedAuth</a></li>
+            <!-- <li id="POSTATUS_3" class="" style="width:30px;"><a class="filter_style" ng-click="filter(3)">Current</a></li> -->
+          </ul>
   			</div>
   			<div class="col-md-4 col-lg-4 col-sm-12">
   				<ul class="pagination">
@@ -79,12 +89,11 @@
   					<a data-toggle='modal' data-target='#CreateFilter' class="btn btn-default" style="border:none;background-color: #fafbfc;font-family: 'Lato', sans-serif;font-size:13px;color:#4a4a4a;letter-spacing:0;"><span class="glyphicon glyphicon-tasks"></span> Create Filter</a>
   				</li>
   				<li style="padding:0px">
-  					<span class="glyphicon glyphicon-download-alt" style="border:none;background:none;display:inline;"></span>
-             <select style="display:inline;width:50%;margin-right:-5%;margin-top:2%;" ng-init="exports.value=0" ng-options="exports.id as exports.name for exports in exportArray" ng-model="exports.value" ng-change="update(exports.value)"></select>
+  					<select style="width:50%;margin-right:-5%;margin-top:2%;margin-left:2%;" ng-init='exports.value=0' ng-options="exports.id as exports.name for exports in exportArray" ng-model="exports.value" ng-change="update(exports.value)"></select>
   				</li>
   				</ul>
   			</div>
-  			<div class="col-md-2 col-lg-2 col-sm-12" style="margin-right:-5%;">
+  			<div class="col-md-2 col-lg-2 col-sm-12" style="margin-left: -3%;">
   				<ul class="pagination">
   				<li style="padding:0px">
   					<a data-toggle='modal' data-target='#hideColumnModal' class="btn btn-default" style="border:none;background-color: #fafbfc;font-family: 'Lato', sans-serif;font-size:13px;color:#4a4a4a;letter-spacing:0;">Hide/Unhide Columns <span class="glyphicon glyphicon-chevron-down"></span></a>
@@ -94,23 +103,21 @@
   			
   			<div class="col-lg-12">
 				<div class="col-md-4 col-lg-4 col-sm-12">
-					<input type="text" name="" placeholder="Search by Supplier Id,Line No,Order No ..." ng-keyup="search()" class="form-control" style="width: 90%;margin-left:-4%;" ng-model="searchKeywords">
+					<input type="text" name="" placeholder="Search by Invoice No,Supplier Id,Supplier Name,Company ..." ng-keyup="search()" class="form-control" style="width: 90%;margin-left:-4%;" ng-model="searchKeywords">
 				</div>
 		        <div class="col-md-8 col-lg-8 col-sm-12">
 		          <input type="text" name="" readonly="true" placeholder="Drag a column to Group by" class="form-control" style="margin-left:-1%;">
 		        </div>  	
   			</div>
   			<div class="col-md-12 col-lg-12 col-sm-12">
-          
   				<div class="" style="margin-top:1%">
-
   					<div id="grid1" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-exporter ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning ui-grid-grouping class="myGrid "></div>
   				</div>
   			</div>
   		</div>
   		</div>
 
-  	<div id="CreateFilter" class="modal fade" role="dialog">
+    <div id="CreateFilter" class="modal fade" role="dialog">
       <div class="modal-dialog" style="margin-left:25%;margin-top:10%;">
         <div class="modal-content">
           <div style=" background-color:#fff;">
@@ -148,25 +155,21 @@
       </div>
     </div>
 
-
   	<div id="hideColumnModal" class="modal fade" role="dialog">
   		<div class="modal-dialog">
-  			<div class="modal-content" style="width:1000px;margin-left:-30%;">
+  			<div class="modal-content" style="width:600px;margin-left:0%;">
   				<div class="modal-header">
   					<button type="button" class="close" data-dismiss="modal">&times;</button>
   					<h4 class="modal-title">Hide/Unhide Columns</h4>
   				</div>
   				<div class="modal-body clearfix" >
   					<div class="col-lg-12">
-  						<div class="col-lg-4" style='border-right:1px solid black'>
-  							<p ng-repeat='data in columnArray track by $index' ng-if='$index<11' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+  						<div class="col-lg-6" style='border-right:1px solid black'>
+  							<p ng-repeat='data in columnArray track by $index' ng-if='$index<8' ><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
   						</div>
-  						<div class="col-lg-4" style='border-right:1px solid black'>
-  							<p ng-repeat='data in columnArray track by $index' ng-if='$index>10 && $index<22'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
+  						<div class="col-lg-6">
+  							<p ng-repeat='data in columnArray track by $index' ng-if='$index>7'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
   						</div>
-              <div class="col-lg-4">
-                <p ng-repeat='data in columnArray track by $index' ng-if='$index>21'><input type="checkbox" ng-model='data.value'  name="{{data.title}}">{{data.title}}</p>
-              </div>
   					</div>
   				</div>
   				<div class="modal-footer">

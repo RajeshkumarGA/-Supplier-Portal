@@ -1,5 +1,5 @@
-app.controller('SupplierInvoiceDetailsController', ['$scope','sessionService', '$rootScope','$http', 'uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants',function ($scope,sessionService, $rootScope,$http, uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants) {
-$rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
+app.controller('NonPoInvoiceDetailsController', ['$scope','sessionService', '$rootScope','$http', 'uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants',function ($scope,sessionService, $rootScope,$http, uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants) {
+  $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
   $rootScope.userName = sessionService.get('UserName');
   if(sessionService.get('tempisPRSEnabled')=='true'){
     $rootScope.IsPRSEnabled=true;
@@ -29,14 +29,13 @@ $scope.ApiDone= false;
  invoiceDetails = JSON.parse(sessionService.get('invoiceDetails'));
  console.log(invoiceDetails);
  invoice_id=invoiceDetails.Invoice_Id;
- $scope.invoice_no=invoiceDetails.Invoice_Id;
+ $scope.Supplier_Id = invoiceDetails.Supplier_Id;
+ $scope.invoice_no=invoiceDetails.Invoice_No;
  $scope.po_ref  = invoiceDetails.PO_Reference;
  $scope.payment_refrence = invoiceDetails.Payment_Reference;
  $scope.invoice_date=invoiceDetails.Invoice_Date.split('T');
- $scope.due_date=invoiceDetails.Due_Date.split('T');
+ // $scope.due_date=invoiceDetails.Due_Date.split('T');
  $scope.payment_terms = invoiceDetails.Payment_Terms_Description;
- $scope.Supplier_Id = invoiceDetails.Supplier_Id;
- $scope.Supplier_Name = invoiceDetails.Supplier_Name;
  $scope.status = invoiceDetails.Status;
  $scope.currency = invoiceDetails.Currency;
  $scope.gross_amount = invoiceDetails.Gross_Amount;
@@ -45,7 +44,7 @@ $scope.ApiDone= false;
  $scope.payment_terms_description = invoiceDetails.Payment_Terms_Description;
  tokenType = sessionService.get('TokenType');
  accessToken = sessionService.get('AccessToken');
- URL = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/invoice/getsupplierinvoicedetails/'+invoice_id;
+ URL = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/nonpoinvoice/getnonposupplierinvoicedetails/'+1241733;
  var Headers = tokenType+' '+accessToken;
  $http({
     method:'GET',
@@ -77,6 +76,8 @@ $scope.ApiDone= false;
       $scope.dataset.push(obj);
     }
    data($scope.dataset);
+   $scope.linesPerPage = sessionService.get("linesPerPage")
+   $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
  },function errorCallback(response){
     console.log(response);
  });  
@@ -130,8 +131,8 @@ $scope.ApiDone= false;
     onRegisterApi: function(gridApi){
       $scope.gridApi = gridApi;
     },
-    paginationPageSizes: [10,20,75],
-    paginationPageSize: 10,
+    paginationPageSizes: [20,50,100],
+   
     columnDefs: [
        
                 { field: 'poNumber',minWidth:130,width:130,enableColumnResizing:false,pinnedLeft:true,displayName:'Po Number',headerCellClass:$scope.highlightFilteredHeader,},
@@ -159,20 +160,9 @@ $scope.ApiDone= false;
       }
 
     };
-     console.log("data is");
-     console.log($scope.dataset);
-  /*$http.get('/data/500_complex.json')
-    .success(function(data) {
-      $scope.gridOptions.data = data;
-      $scope.gridOptions.data[0].age = -5;
- 
-      data.forEach( function addDates( row, index ){
-        row.mixedDate = new Date();
-        row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
-        row.gender = row.gender==='male' ? '1' : '2';
-      });
-    });
-    */
+     // console.log("data is");
+     // console.log($scope.dataset);
+  
     $scope.columnArray=[
         // {'id':0,'title':'PO Number','value':false},
         // {'id':1,'title':'Line No Invoice','value':false},
@@ -582,19 +572,4 @@ $scope.ApiDone= false;
     }
 
   }])
-.filter('mapGender', function() {
-  var genderHash = {
-    1: 'male',
-    2: 'female'
-  };
-
-  return function(input) {
-    if (!input){
-      return '';
-    } else {
-      return genderHash[input];
-    }
-  };
-
-});
 

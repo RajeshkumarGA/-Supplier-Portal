@@ -1,8 +1,8 @@
-  <link rel="styleSheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.css"/>
-  <section ng-controller="SupplierInvoiceDetailsController" style="background-color: #fafbfc;">
+  <!-- <link rel="styleSheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.css"/> -->
+  <section ng-controller="NonPoInvoiceDetailsController" style="background-color: #fafbfc;">
   	<div class="controller">
 		  	<div class="row">
-			  	<div class="col-lg-10"><h3>Supplier Invoice Details</h3></div>
+			  	<div class="col-lg-10"><h3>Supplier NON PO Invoice Details</h3></div>
 			  	<div class="col-lg-2" style="margin-top:1%;float:right;">
 			  	     <button ng-click="toggle = !toggle" class="btn-hide">
           					<span ng-show ="toggle" class="glyphicon glyphicon-eye-close" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
@@ -19,14 +19,14 @@
                   <input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:25px;" ng-model="po_ref">
                 </div>
                 <div class="col-lg-6 col-md-6">
-                  <label>Supplier:</label>
+                  <label>Supplier ID:</label>
                   <input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:25px" ng-model="Supplier_Id">
                 </div>
             </div>
             <div class="col-md-3" >
               <div class="col-lg-12 col-md-12">
                   <label>Supplier Name</label>
-                  <input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:25px;" ng-model="Supplier_Name">
+                  <input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:25px;">
                 </div>
                 
             </div>

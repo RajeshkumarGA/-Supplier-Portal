@@ -1,7 +1,27 @@
 app.controller('purchaseOrderLineController', ['$scope','sessionService','$rootScope','$http','$location','uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants','sessionService',
 function ($scope,sessionService, $rootScope,$http,$location,uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants,sessionService) {
-$rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
-$rootScope.userName = sessionService.get('UserName');
+  $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
+  $rootScope.userName = sessionService.get('UserName');
+  if(sessionService.get('tempisPRSEnabled')=='true'){
+    $rootScope.IsPRSEnabled=true;
+    }
+    else{
+      $rootScope.IsPRSEnabled=false;
+    }
+    if(sessionService.get('tempisFISEnabled')=='true'){
+      $rootScope.isFISEnabled=true;
+    }
+    else{
+      $rootScope.isFISEnabled=false;
+      
+    }
+    if(sessionService.get('tempisSubmissionNonPOInvoiceEnabled')=='true'){
+      $rootScope.isSubmissionNonPOInvoiceEnabled=true;
+    }
+    else{
+      $rootScope.isSubmissionNonPOInvoiceEnabled=false;
+      
+    }
 $scope.viewChange=function(getValue){
     if(getValue==0) $location.path('/PurchaseOrder'); 
     if(getValue==1) $location.path('/PurchaseOrderLine');
@@ -19,11 +39,15 @@ $http({
     url: dataURL,
     headers:{'Authorization':Headers}
  }).then(function(response){
+  // console.log(response);
     for (var i=0;i<response.data.length;i++){
        $scope.date_entered=response.data[i].datE_ENTERED.split('T');
-      $scope.planned_Delivery_Date=response.data[i].planneD_DELIVERY_DATE.split('T');
+       // $scope.planned_Delivery_Date=response.data[i].planneD_DELIVERY_DATE.split('T');
+       // $scope.Planned_receipt_date=response.data[i].planneD_RECEIPT_DATE.split('T');
+       // $scope.PromiseD_DELIVERY_Date=response.data[i].promiseD_DELIVERY_DATE.split('T');
+       // $scope.latesT_ORDER_DATE=response.data[i].latesT_ORDER_DATE.split('T');
         var obj = {
-            "PO_Number":12536,
+            "PO_Number":response.data[i].ordeR_NO,
             "Line_No":response.data[i].linE_NO,
             "Release_No":response.data[i].releasE_NO,
             "PO_Status":response.data[i].pO_STATUS,
@@ -49,7 +73,7 @@ $http({
             "Buy_UoM":response.data[i].buY_UNIT_MEAS,
             "Revised_Qty":response.data[i].reviseD_QTY,
             "Planned_Receipt_Date":response.data[i].planneD_RECEIPT_DATE,
-            "Planned_Delivery_Date":$scope.planned_Delivery_Date[0],
+            "Planned_Delivery_Date":response.data[i].planneD_DELIVERY_DATE,
             "Wanted_Delivery_Date":response.data[i].wanteD_DELIVERY_DATE,
             "Unit_Meas":response.data[i].uniT_MEAS,
             "Promised_Delivery_Date":response.data[i].promiseD_DELIVERY_DATE,
@@ -77,7 +101,35 @@ $http({
        }
     $scope.dataset.push(obj);
     }
+    $scope.linesPerPage = sessionService.get("linesPerPage")
+    $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
     data($scope.dataset);
+    $scope.ApiDone= true;
+    var count = 0;
+    var count1 = 0;
+    var count2 = 0;
+    var count3 = 0;
+    for(var i=0;i<$scope.dataset.length;i++){
+      if($scope.dataset[i].PO_Status=='Closed'){count++;}
+      else if ($scope.dataset[i].PO_Status=='Planned') {count1++;}
+      else if ($scope.dataset[i].PO_Status=='Received') {count2++;}
+      else{count3++;}
+    }
+    $scope.PieClosed = count;
+    $scope.pieData.push(count);
+    $scope.PiePlanned = count1;
+    $scope.pieData.push(count1);
+    $scope.PieReceived = count2;
+    $scope.pieData.push(count2);
+    $scope.PieReleased = count3;
+    $scope.pieData.push(count3);
+    var t = count+count1+count2+count3;
+    $scope.PieClosedPer = ((count*100)/t).toFixed(0);
+    $scope.PiePlannedPer = ((count1*100)/t).toFixed(0);
+    $scope.PieReceivedPer = ((count2*100)/t).toFixed(0);
+    $scope.PieReleasedPer = ((count3*100)/t).toFixed(0);
+    $scope.renderPieChart();
+    dateChart($scope.dataset);
  },function errorCallback(response){
     console.log(response);
  }); 
@@ -135,8 +187,8 @@ $http({
     onRegisterApi: function(gridApi){
       $scope.gridApi = gridApi;
     },
-    paginationPageSizes: [10,20,75],
-    paginationPageSize: 10,
+    paginationPageSizes: [20,50,100],
+    // paginationPageSize: 10,
     enablePinning: false,
     columnDefs: [
       { field:'PO_Number',displayName: "PO Number", width: 150,pinnedLeft:true,groupingShowAggregationMenu: false,enableHiding:false,
@@ -229,7 +281,7 @@ $http({
                  options:[{index:14},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Date_Entered',displayName: "Date Enterd", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Date_Entered',displayName: "Date Enterd", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:15},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -271,37 +323,37 @@ $http({
                  options:[{index:21},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Buy_Qty_Due',displayName: "Buy Qty DUE", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Buy_Qty_Due',displayName: "Buy Qty DUE",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:22},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Buy_UoM',displayName: "Buy Unit Meas", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Buy_UoM',displayName: "Buy Unit Meas",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:23},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Revised_Qty',displayName: "Revised Qty", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Revised_Qty',displayName: "Revised Qty",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:24},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Planned_Receipt_Date',displayName: "Planned Receipt Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Planned_Receipt_Date',displayName: "Planned Receipt Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:25},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Planned_Delivery_Date',displayName: "Planned Delivery Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Planned_Delivery_Date',displayName: "Planned Delivery Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:26},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Wanted_Delivery_Date',displayName: "Wanted Delivery Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Wanted_Delivery_Date',displayName: "Wanted Delivery Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:27},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -313,37 +365,37 @@ $http({
                  options:[{index:28},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Promised_Delivery_Date',displayName: "Promised Delivery Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Promised_Delivery_Date',displayName: "Promised Delivery Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:29},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Latest_Order_Date',displayName: "Latest Order Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Latest_Order_Date',displayName: "Latest Order Date", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:30},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Price',displayName: "Price", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Price',displayName: "Price",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:31},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Price_With_Tax',displayName: "Price With Tax", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Price_With_Tax',displayName: "Price With Tax",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:32},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Base_Price',displayName: "Base Price", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Base_Price',displayName: "Base Price",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:33},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Base_Price_With_Tax',displayName: "Base Price With Tax", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Base_Price_With_Tax',displayName: "Base Price With Tax",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:34},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -379,19 +431,19 @@ $http({
                  options:[{index:39},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Net_Amount',displayName: "Net Amount", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Net_Amount',displayName: "Net Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:40},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Gross_Amount',displayName: "Gross Amount", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Gross_Amount',displayName: "Gross Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:41},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Tax_Amount',displayName: "Tax Amount", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Tax_Amount',displayName: "Tax Amount",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:42},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -421,19 +473,19 @@ $http({
                  options:[{index:46},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Invoice_Unit_Price',displayName: "Invoice Unit Price", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Invoice_Unit_Price',displayName: "Invoice Unit Price",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:47},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Invoice_Discount_Amount',displayName: "Invoice Discount Amt", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Invoice_Discount_Amount',displayName: "Invoice Discount Amt",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:48},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
         }
       },
-      { field:'Invoice_Additional_Cost_Amount',displayName: "Invoice Additional Cost Amt", width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
+      { field:'Invoice_Additional_Cost_Amount',displayName: "Invoice Additional Cost Amt",cellFilter: 'currency:"USD " :2', width: 150,pinnedLeft:false,groupingShowAggregationMenu: false,enableHiding:false,
         filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
         filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
                  options:[{index:49},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.EXACT, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
@@ -601,15 +653,66 @@ $http({
 
   data($scope.dataset);
   function data(data) {
+    $scope.dateBarChart=[];
     $scope.gridOptions.data = data;
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.Date_Entered = new Date(val.Date_Entered);
-    });
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.Planned_Delivery_Date = new Date(val.Planned_Delivery_Date);
-    });
   }
-  $scope.filter = function(getValue){
+   function dateChart(data){
+     _.forEach(data, function (val) {
+       var date_chart=new Date(val.Date_Entered);
+       // console.log(date_chart.getFullYear());
+       $scope.dateBarChart.push({year:date_chart.getFullYear(),month:date_chart.getMonth()});
+    });
+      var thisYear = new Date();
+    // console.log("year is ");
+    // console.log(thisYear.getFullYear());
+    $scope.dateBarChartCount=[0,0,0,0,0,0,0,0,0,0,0,0];
+    for (var i=0;i<$scope.dateBarChart.length;i++){
+      if($scope.dateBarChart[i].year==thisYear.getFullYear()){
+        var month = $scope.dateBarChart[i].month;
+        switch (month+1) {
+          case 1:
+          $scope.dateBarChartCount[0]++;
+          console.log(month);
+          break;
+          case 2:
+          $scope.dateBarChartCount[1]++;
+          break;
+          case 3:
+          $scope.dateBarChartCount[2]++;
+          break;
+          case 4:
+          $scope.dateBarChartCount[3]++;
+          break;
+          case 5:
+          $scope.dateBarChartCount[4]++;
+          break;
+          case 6:
+          $scope.dateBarChartCount[5]++;
+          break;
+          case 7:
+          $scope.dateBarChartCount[6]++;
+          break;
+          case 8:
+          $scope.dateBarChartCount[7]++;
+          break;
+          case 9:
+          $scope.dateBarChartCount[8]++;
+          break;
+          case 10:
+          $scope.dateBarChartCount[9]++;
+          break;
+          case 11:
+          $scope.dateBarChartCount[10]++;
+          break;
+          case 12:
+          $scope.dateBarChartCount[11]++;
+          break;
+        }
+      }
+    }
+    $scope.renderBarChart();
+  }
+ $scope.filter = function(getValue){
     var myE0 = angular.element( document.querySelector( '.active' ) );
     myE0.removeClass('active');
     var myEl = angular.element( document.querySelector( '#POSTATUS_'+getValue) );
@@ -617,30 +720,64 @@ $http({
     $scope.workingDatabase=$scope.dataset;
     switch (getValue){
       case 0:
+      angular.element( document.querySelector('#POSTATUS_0')).addClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
       data($scope.workingDatabase);
       break;
       case 1:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
       $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
+        if($scope.dataset[i].PO_Status=='Closed')
           $scope.workingDatabase.push($scope.dataset[i]);
 
       }
       data($scope.workingDatabase);
       break;
       case 2:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
       $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Closed')
+        if($scope.dataset[i].PO_Status=='Planned')
           $scope.workingDatabase.push($scope.dataset[i]);
 
       }
       data($scope.workingDatabase);
       break;
       case 3:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).removeClass('active');
       $scope.workingDatabase=[];
       for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
+        if($scope.dataset[i].PO_Status=='Received')
+          $scope.workingDatabase.push($scope.dataset[i]);
+
+      }
+      data($scope.workingDatabase);
+      break;
+      case 4:
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_3')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_4')).addClass('active');
+      $scope.workingDatabase=[];
+      for(var i=0;i<$scope.dataset.length;i++){
+        if($scope.dataset[i].PO_Status=='Released')
           $scope.workingDatabase.push($scope.dataset[i]);
 
       }
@@ -649,47 +786,61 @@ $http({
 
     }
   }
-  $scope.selectdate=function(){
-    $scope.fdate= new Date($scope.Date_Enteredsearch);
-    $scope.edate= new Date($scope.Planned_Delivery_Datesearch);
-    if($scope.Date_Enteredsearch && $scope.Planned_Delivery_Datesearch){
-      $scope.workingDatabase=[];
+   $scope.selectdate=function(){
+    $scope.fdate= new Date($scope.requisitionDatesearch);
+    $scope.edate= new Date($scope.requisitionDateEndsearch);
+    $scope.workingDatabase=[];
+    if($scope.requisitionDatesearch && $scope.requisitionDateEndsearch){
+      
+      var date;
       for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].Date_Entered.getDate() && $scope.fdate.getMonth()-1<=$scope.dataset[i].Date_Entered.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].Date_Entered.getFullYear() && $scope.edate.getDate()>=$scope.dataset[i].Planned_Delivery_Date.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].Planned_Delivery_Date.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].Planned_Delivery_Date.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-      data($scope.workingDatabase);
-    }
-  else{
-    if($scope.Date_Enteredsearch) {
-     
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].Date_Entered.getDate() && $scope.fdate.getMonth()<=$scope.dataset[i].Date_Entered.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].Date_Entered.getFullYear()){
+         date = new Date($scope.dataset[i].Date_Entered);
+        if($scope.fdate-date<=0 && $scope.edate-date>=0 )
           $scope.workingDatabase.push($scope.dataset[i]);
         
         }
+        data($scope.workingDatabase);
       }
-    }
-    else{
-      for(var i=0;i<$scope.dataset.length;i++){
-      
-        if($scope.edate.getDate()>=$scope.dataset[i].Planned_Delivery_Date.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].Planned_Delivery_Date.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].Planned_Delivery_Date.getFullYear()){
-           $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-    }
-    data($scope.workingDatabase);
+      else{
 
-  }
-    if(!$scope.Date_Enteredsearch && ! $scope.Planned_Delivery_Datesearch){
-      $scope.workingDatabase=[];
+         if($scope.requisitionDatesearch){
+           
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Date_Entered);
+               if($scope.fdate-date<=0){
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            data($scope.workingDatabase);
+
+      }
+      else{
+          if($scope.requisitionDateEndsearch){
+            
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Date_Entered);
+               if($scope.edate-date>=0){
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            console.log($scope.workingDatabase);
+            
+
+           }
+
+           data($scope.workingDatabase);
+      }
+     
+    }
+    
+    if(!$scope.requisitionDatesearch && ! $scope.latestOrderDatesearch){
+      
       $scope.workingDatabase=$scope.dataset;
       data($scope.workingDatabase);
     }
   }
- 
     //If DIV is visible it will be hidden and vice versa.
    $scope.toggle = true;
     $scope.$watch('toggle', function(){
@@ -698,45 +849,16 @@ $http({
     })
   $scope.pieData=[];
   $scope.renderCharts = function(){
-    $scope.renderPieChart();
-    $scope.renderBarChart();
+    // $scope.renderPieChart();
+    // $scope.renderBarChart();
     
    
-    var count = 0;
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
-          count++;
-      }
-      $scope.PieActive = count;
-      $scope.pieData.push(count);
-
-    var count1 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Closed')
-          count1++;
-      }
-       $scope.PieClosed = count1;
-       $scope.pieData.push(count1);
-
-    var count2 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
-          count2++;
-      }
-      $scope.PieCancelled = count2;
-      $scope.pieData.push(count2);
-
-      var t = count+count1+count2;
-      $scope.PieActivePer = ((count*100)/t).toFixed(0);
-      $scope.PieClosedPer = ((count1*100)/t).toFixed(0);
-      $scope.PieCancelledPer = ((count2*100)/t).toFixed(0);
-    
   }
   $scope.renderPieChart = function(){
      // console.log(PieTotal);
-      var data = {datasets: [{data: [33,231,44],
-        backgroundColor: ["#f8e71c","#f5a800","#bd10e0"]}],
-        labels: ["Active","Closed","Current"],
+     var data = {datasets: [{data: $scope.pieData,
+        backgroundColor: ["#f8e71c","#f5a800","#bd10e0","#95E71F"]}],
+        labels: ["Closed","Planned","Received","Released"],
       };
       var canvas = document.getElementById("myPieChart");
       var ctx = canvas.getContext("2d");
@@ -767,7 +889,7 @@ $http({
    }
 
    $scope.renderBarChart = function() {
-   $scope.val = [44,11,22,33,55,33,11,22,44,33,0,0];
+   $scope.val = $scope.dateBarChartCount;
     //console.log($scope.val);
     var data = {labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     datasets: [{
@@ -780,8 +902,8 @@ $http({
  };
  var canvas = document.getElementById("myBarChart");
       var ctx = canvas.getContext("2d");
-      canvas.style.width = "300px";
-      canvas.style.height = "50px";
+      canvas.style.width = "900px";
+      canvas.style.height = "150px";
       var myNewChart = new Chart(ctx, {
         type: 'bar',
         data: data,

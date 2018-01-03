@@ -1,7 +1,6 @@
 app.controller('homeLoginController',
-	['$scope','$rootScope','$location','$http','sessionService',function($scope,$rootScope,$location,$http,sessionService){
-	$scope.changePassword = false;
-	// $scope.alertData = false;	
+	['$scope','$rootScope','$location','$route','$http','sessionService','$interval',function($scope,$rootScope,$location,$route,$http,sessionService,$interval){
+	$scope.changePassword = false;	
 	$scope.login = function(){
 		$http({
 			method: 'POST',
@@ -23,50 +22,110 @@ app.controller('homeLoginController',
 	      var URL = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/accounts/user/'+$scope.userName;
 	      var Headers = tokenType +' '+ accessToken;
       	$http({
-					method: 'GET',
-	    		url: URL,
-	    		headers: {'Authorization': Headers},
+			method: 'GET',
+    		url: URL,
+    		headers: {'Authorization': Headers},
 			})
 	    .then(function(response){
-	    	if(response.data.isActive){
+	    	if(response.data.isActive==1){
 		      if(response.data.roles.indexOf('Admin') !== -1){
 		      	sessionService.set('UserName',response.data.userName);
 		      	sessionService.set('AdminLoggedIn',true);
 		      	$rootScope.AdminloggedIn=sessionService.get('AdminLoggedIn');
-		      	$scope.$emit('isAdminLoggedIn', sessionService.get('AdminLoggedIn'));
+		      	//$scope.$emit('isAdminLoggedIn', sessionService.get('AdminLoggedIn'));
 		      	$rootScope.userName = sessionService.get('UserName');
 		      	$rootScope.UserloggedIn=false;
 		      	$location.path('/AdminHome');
-		      	console.log(sessionService.get('AdminLoggedIn'));
-		      	// sessionService.set('UserName',response.data.userName);
-		      	// $rootScope.AdminuserName = sessionService.get('UserName');
+		      
 		      }
 		      else{
 		      	ifsSupplierId = response.data.ifsSupplierNum;
 		      	fullName = response.data.fullName;
 		      	sessionService.set('ifsSupplierNum',ifsSupplierId);
 		      	sessionService.set('fullName',fullName);
-		      	console.log(response.data);
 		      	sessionService.set('firstName',response.data.firstName);
 		      	sessionService.set('lastName',response.data.lastName);
 		      	sessionService.set('phoneNumber',response.data.phoneNumber);
 		      	sessionService.set('companyName',response.data.companyName);
 		      	sessionService.set('UserName',response.data.userName);
 		      	sessionService.set('address',response.data.address);
-		      	
+		      	sessionService.set('isPRSEnabled',response.data.isPRSEnabled);
+		      	sessionService.set('isFISEnabled',response.data.isFISEnabled);
+		      	sessionService.set('isSubmissionNonPOInvoiceEnabled',response.data.isSubmissionNonPOInvoiceEnabled);
 		      	sessionService.set('UserLoggedIn',true);
-		      	$rootScope.UserloggedIn = sessionService.get('UserLoggedIn');
-		      	$scope.$emit('isUserLoggin', sessionService.get('UserLoggedIn'));
+		      	//$scope.$emit('isUserLoggin', sessionService.get('UserLoggedIn'));
 		      	$rootScope.userName = sessionService.get('UserName');
-		      	$rootScope.AdminloggedIn=false;
-		      	$location.path('/Dashboard');
+		      	$http({
+					method: 'GET',
+					url: 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/userconfiguration/getUserConfiguration/'+ifsSupplierId,
+					headers: {'Authorization': Headers,'Content-Type':'application/x-www-form-urlencoded'},
+					})
+					.then(function(response){
+						if(response.data.length==0){
+							if(sessionService.get('isPRSEnabled')==true){
+								$rootScope.IsPRSEnabled=true;
+		      				}
+		      				else{
+		      					$rootScope.IsPRSEnabled=false;
+
+		      				}
+		      				if(sessionService.get('isFISEnabled')==true){
+		      					$rootScope.isFISEnabled=true;
+		      				}
+		      				else{
+		      					$rootScope.isFISEnabled=false;
+		      					
+		      				}
+		      				if(sessionService.get('isSubmissionNonPOInvoiceEnabled')==true){
+		      					$rootScope.isSubmissionNonPOInvoiceEnabled=true;
+		      				}
+		      				else{
+		      					$rootScope.isSubmissionNonPOInvoiceEnabled=false;
+		      					
+		      				}
+						}
+						else{
+							if(sessionService.get('isPRSEnabled')=='true' && response.data[0].isPurchaseRequistionEnabled==true ){
+								$rootScope.IsPRSEnabled=true;
+		      				}
+		      				else{
+		      					$rootScope.IsPRSEnabled=false;
+		      				}
+		      				if(sessionService.get('isFISEnabled')=='true' && response.data[0].isRecentPurchaseOrderEnabled==true){
+		      					$rootScope.isFISEnabled=true;
+		      				}
+		      				else{
+		      					$rootScope.isFISEnabled=false;
+		      					
+		      				}
+		      				if(sessionService.get('isSubmissionNonPOInvoiceEnabled')=='true' && response.data[0].isUnpaidInvoicesEnabled==true){
+		      					$rootScope.isSubmissionNonPOInvoiceEnabled=true;
+		      				}
+		      				else{
+		      					$rootScope.isSubmissionNonPOInvoiceEnabled=false;
+		      					
+		      				}
+		      				sessionService.set('tempisPRSEnabled',$rootScope.IsPRSEnabled);
+		      				sessionService.set('tempisFISEnabled',$rootScope.isFISEnabled);
+		      				sessionService.set('tempisSubmissionNonPOInvoiceEnabled',$rootScope.isSubmissionNonPOInvoiceEnabled);
+						}
+						$rootScope.AdminloggedIn=false;
+					
+
+						$scope.$emit('pagePer', [sessionService.get('UserLoggedIn'),$rootScope.IsPRSEnabled,$rootScope.isFISEnabled,$rootScope.isSubmissionNonPOInvoiceEnabled]);
+		      			$location.path('/Dashboard');
+
+					});
+		      	
+		      	
+		      	
+
 		      }
 		  }
 		  else{
 		  	alert('Contact to Admin for Access the portal.');
 		  }
-			},
-			function errorCallBack(response) {
+		},function errorCallBack(response) {
 			 	alert('Permission Denied');
 			})
 		},
@@ -166,4 +225,5 @@ app.controller('homeLoginController',
 		})
   	
   }
+
 }]);

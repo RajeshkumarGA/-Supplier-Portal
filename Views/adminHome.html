@@ -8,6 +8,7 @@
 	  				<ul class="pagination">
 	  					<li><a disabled class="filter_style" style="color:#4a4a4a;">User Status : </a></li>
 	  					<li id="POSTATUS_0" class="active" ><a ng-click="filter(0)" class="filter_style" style="width:60px;text-align: center;">All</a></li>
+	  					<li id="POSTATUS_3" class="" ><a class="filter_style" ng-click="filter(3)" style="width:100px;text-align: center;">New</a></li>
 	  					<li id="POSTATUS_1" class="" ><a ng-click="filter(1)" class="filter_style" style="width:100px;text-align: center;">Active</a></li>
 	  					<li id="POSTATUS_2" class="" ><a class="filter_style" ng-click="filter(2)" style="width:100px;text-align: center;">Inactive</a></li>
 	  				</ul>
@@ -82,11 +83,24 @@
 	  				        </div>
 	  							
 	  						</div>
+	  						<div class="col-lg-12">
+	  							<label>Role: </label>
+	  							<div class="col-lg-3">
+		  							<label class="radio-inline">
+		  								<input type="radio" ng-model='role' value='User'>User
+		  							</label>
+	  							</div>
+	  							<div class="col-lg-3">
+		  							<label class="radio-inline">
+		  								<input type="radio" ng-model='role' value='Admin'>Admin
+		  							</label>
+		  						</div>
+	  						</div>
 	  						
 	  				        <div class="col-lg-6 col-md-6">
 	  							<label>Status</label>
-	  							<button style="width:150px" id='ActiveactiveButton'  ng-click="StatusUpdate('Active',true)">Active</button>
-			                    <button style="width:150px" id='ActiveinactiveButton' ng-click="StatusUpdate('Active',false)" >Inactive</button>
+	  							<button style="width:150px" id='ActiveactiveButton'  ng-click="StatusUpdate('Active',1)">Active</button>
+			                    <button style="width:150px" id='ActiveinactiveButton' ng-click="StatusUpdate('Active',0)" >Inactive</button>
 	  						</div>
 	  						<div class="col-lg-12 col-md-12">
 	  							<label>Permissions</label>
@@ -104,6 +118,99 @@
   				</div>
   				<div class="modal-footer">
   					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;" data-dismiss="modal" ng-click='UpdateStatus(activeModalUserId)'>Confirm</button>
+  				</div>
+  			</div>
+
+  		</div>
+  	</div>
+  	<div id="ActivateUseragain" class="modal fade" role="dialog">
+  		<div class="modal-dialog"  style="width:800px;">
+  			<div class="modal-content" >
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal">&times;</button>
+  					<h4 class="modal-title">Activate User</h4>
+  				</div>
+  				<div class="modal-body" style="padding-bottom:62%;color:#A1A2A2">
+  					<form style="margin-left:0%;">
+	  					<div class="col-lg-12 col-md-12">
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>First Name</label>
+	  							<input type="text" name="FirstName" placeholder="Enter Full Name" class="form-control input-sm" style="height:35px ;" ng-model="againFirstName" readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Last Name</label>
+	  							<input type="text" name="LastName" placeholder="Enter Last Name" class="form-control input-sm" style="height:35px" ng-model="againLastName" readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>User Name</label>
+	  							<input type="text" name="UserName" placeholder="Enter User Name" class="form-control input-sm" style="height:35px" ng-model='againUserName' readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Email ID</label>
+	  							<input type="text" name="Email" placeholder="Enter Email ID" class="form-control input-sm" style="height:35px" ng-model='againEmail' readonly>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Phone No</label>
+	  							<input type="text" name="Phone No" placeholder="Enter Phone No" class="form-control input-sm" style="height:35px" readonly ng-model='againPhone'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Default Company ID</label>
+	  							<input type="text" name="DefaultCompanyId" placeholder="Enter Default Company ID" class="form-control input-sm" style="height:35px" readonly ng-model='againDefaultCompanyId'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Company Name</label>
+	  							<input type="text" name="CompanyName" placeholder="Enter Company Name" class="form-control input-sm" style="height:35px" readonly ng-model='againCompanyName'>
+	  						</div>
+	  						<div class="col-lg-6 col-md-6">
+	  							<label>Currency</label>
+	  							<input type="text" name="Currency" placeholder="Enter Currency" class="form-control input-sm" style="height:35px," readonly ng-model='againCurrency'>
+	  						</div>
+	  						<div class="row">
+	  							<div class="col-lg-6 col-md-6" style="margin-left:-48%;">
+	  							<label>Address</label>
+	  							<input type="text" name="EditAddress" placeholder="Enter address" class="form-control input-sm" style="height:35px;width:95%" ng-model="againEditAddress">
+	  				        </div>
+	  				        <div class="col-lg-6 col-md-6" style="margin-left:-2%;margin-right:-5%">
+	  							<label>IFS Supplier No</label>
+	  							<input type="text" name="ifsSupplierNum" placeholder="Enter IFS Supplier No" class="form-control input-sm" style="height:35px;width:95%" ng-model="againifsSupplierNum">
+	  				        </div>
+	  							
+	  						</div>
+	  						<div class="col-lg-12">
+	  							<label>Role: </label>
+	  							<div class="col-lg-3">
+		  							<label class="radio-inline">
+		  								<input type="radio" ng-model='againrole' value='User'>User
+		  							</label>
+	  							</div>
+	  							<div class="col-lg-3">
+		  							<label class="radio-inline">
+		  								<input type="radio" ng-model='againrole' value='Admin'>Admin
+		  							</label>
+		  						</div>
+	  						</div>
+	  						
+	  				        <div class="col-lg-6 col-md-6">
+	  							<label>Status</label>
+	  							<button style="width:150px" id='againActiveactiveButton'  ng-click="StatusUpdate('againActive',1)">Active</button>
+			                    <button style="width:150px" id='againActiveinactiveButton' ng-click="StatusUpdate('againActive',2)" >Inactive</button>
+	  						</div>
+	  						<div class="col-lg-12 col-md-12">
+	  							<label>Permissions</label>
+	  							<div class="col-lg-6 col-md-6">
+	  								<label><input type="checkbox" ng-model="againisFISEnabled" value="{{againisFISEnabled}}"> Enable Financial Information screen</label>
+	  								<label><input type="checkbox" ng-model="againisPRSEnabled" value="{{againisPRSEnabled}}" >Enable Purchase Requisition screen</label>
+	  							</div>
+	  							<div class="col-lg-6 col-md-6">
+	  								<label><input type="checkbox" ng-model="againisSubmissionNonPOInvoiceEnabled" value="{{againisSubmissionNonPOInvoiceEnabled}}" >Enanle Submission of Non-PO Invoices</label>
+	  							</div>
+	  				        </div>
+	  					</div>
+	  					
+  					</form>	
+  				</div>
+  				<div class="modal-footer">
+  					<button style="background-color:black;color:#fff;float:left;margin-right:2.5%;border:none;border-radius:2px;width:100px;height:35px;" data-dismiss="modal" ng-click='UpdateStatusagain(againactiveModalUserId)'>Confirm</button>
   				</div>
   			</div>
 
@@ -162,11 +269,24 @@
 	  				        </div>
 	  							
 	  						</div>
+	  						<div class="col-lg-12">
+	  							<label>Role: </label>
+	  							<div class="col-lg-3">
+		  							<label class="radio-inline">
+		  								<input type="radio" ng-model='Editrole' value='User'>User
+		  							</label>
+	  							</div>
+	  							<div class="col-lg-3">
+		  							<label class="radio-inline">
+		  								<input type="radio" ng-model='Editrole' value='Admin'>Admin
+		  							</label>
+		  						</div>
+	  						</div>
 	  						
 	  				        <div class="col-lg-6 col-md-6">
 	  							<label>Status</label>
-	  							<button style="width:150px" id='EditactiveButton'  ng-click="StatusUpdate('Edit',true)">Active</button>
-			                    <button style="width:150px" id='EditinactiveButton' ng-click="StatusUpdate('Edit',false)" >Inactive</button>
+	  							<button style="width:150px" id='EditactiveButton'  ng-click="StatusUpdate('Edit',1)">Active</button>
+			                    <button style="width:150px" id='EditinactiveButton' ng-click="StatusUpdate('Edit',2)" >Inactive</button>
 	  						</div>
 	  						<div class="col-lg-12 col-md-12">
 	  							<label>Permissions</label>

@@ -1,12 +1,13 @@
-app.config(function($routeProvider) {
+app.config(function($routeProvider,$locationProvider) {
     $routeProvider
     .when("/", {
-        templateUrl : "views/home.html",
-        controller: 'homeLoginController'
+        templateUrl : "views/home.html"
+    })
+    .when("/dd", {
+        templateUrl : "index.html"
     })
     .when("/Signup",{
-         templateUrl : "views/signup.html",
-        controller: 'signupController'
+         templateUrl : "views/signup.html"
     })
      .when("/PurchaseOrder",{
          resolve:{
@@ -19,8 +20,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl : "views/PurchaseOrder.html",
-        controller: 'purchaseOrderController'
+        templateUrl : "views/PurchaseOrder.html"
     })
      .when("/PurchaseOrderLine",{
          resolve:{
@@ -33,8 +33,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl : "views/PurchaseOrderLine.html",
-        controller: 'purchaseOrderLineController'
+        templateUrl : "views/PurchaseOrderLine.html"
     })
      .when("/Dashboard",{
          resolve:{
@@ -46,8 +45,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl : "views/MyDashboard.html",
-        controller: 'MyDashboardController'
+        templateUrl : "views/MyDashboard.html"
      })
      .when("/PurchaseRequisitions",{
          resolve:{
@@ -59,8 +57,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl : "views/PurchaseRequisitionsMain.html",
-        controller: 'PurchaseRequisitions'
+        templateUrl : "views/PurchaseRequisitionsMain.html"
      })
      .when("/SupplierShipment",{
          resolve:{
@@ -72,8 +69,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/SupplierShipment.html",
-        controller: 'SupplierShipmentController'
+        templateUrl :"views/SupplierShipment.html"
      })
      .when("/Payments",{
          resolve:{
@@ -85,8 +81,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/Payments.html",
-        controller: 'PaymentsController'
+        templateUrl :"views/Payments.html"
      })
      .when("/AutomaticPayment",{
          resolve:{
@@ -98,8 +93,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/AutomaticPayment.html",
-        controller: 'AutomaticPaymentController'
+        templateUrl :"views/AutomaticPayment.html"
      })
         .when("/CheckPayment",{
          resolve:{
@@ -111,8 +105,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/checkPayment.html",
-        controller: 'checkPaymentController'
+        templateUrl :"views/checkPayment.html"
      })
       .when("/SupplierInvoice",{
          resolve:{
@@ -124,8 +117,19 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/SupplierInvoice.html",
-        controller: 'SupplierInvoiceController'
+        templateUrl :"views/SupplierInvoice.html"
+     })
+       .when("/NonPOInvoices",{
+         resolve:{
+            "check":function($location,$rootScope,sessionService)
+            {
+                if (!sessionService.get('UserLoggedIn')) {
+                    $location.path("/");
+                }
+            }
+         
+        },
+        templateUrl :"views/NonPOInvoices.html"
      })
       .when("/CreateInvoice",{
          resolve:{
@@ -137,8 +141,19 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/CreateInvoice.html",
-        controller: 'CreateInvoiceController'
+        templateUrl :"views/CreateInvoice.html"
+     })
+       .when("/CreateNonPoInvoice",{
+         resolve:{
+            "check":function($location,$rootScope,sessionService)
+            {
+                if (!sessionService.get('UserLoggedIn')) {
+                    $location.path("/");
+                }
+            }
+         
+        },
+        templateUrl :"views/CreateNonPoInvoice.html"
      })
       .when("/SupplierInvoiceDetails",{
          resolve:{
@@ -150,8 +165,19 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/SupplierInvoiceDetails.html",
-        controller: 'SupplierInvoiceDetailsController'
+        templateUrl :"views/SupplierInvoiceDetails.html"
+     })
+      .when("/NonPoInvoiceDetails",{
+         resolve:{
+            "check":function($location,$rootScope,sessionService)
+            {
+                if (!sessionService.get('UserLoggedIn')) {
+                    $location.path("/");
+                }
+            }
+         
+        },
+        templateUrl :"views/NonPoInvoiceDetails.html"
      })
       .when("/ViewMyprofile",{
          resolve:{
@@ -163,8 +189,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/ViewMyprofile.html",
-        controller: 'ViewMyprofileController'
+        templateUrl :"views/ViewMyprofile.html"
      })
        .when("/Settings",{
          resolve:{
@@ -176,8 +201,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl :"views/Settings.html",
-        controller: 'SettingsController'
+        templateUrl :"views/Settings.html"
      })
        .when("/AdminHome", {
          resolve:{
@@ -189,8 +213,7 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl : "views/adminHome.html",
-        controller: 'adminHomeController'
+        templateUrl : "views/adminHome.html"
     })
     .when("/AppConfiguration", {
          resolve:{
@@ -202,11 +225,8 @@ app.config(function($routeProvider) {
             }
          
         },
-        templateUrl : "views/AppConfiguration.html",
-        controller: 'AppConfigurationController'
+        templateUrl : "views/AppConfiguration.html"
     })
-     //  .when("/PurchaseOrder",{
-     //    templateUrl :"views/PurchaseOrder.html",
-     //    controller: 'PurchaseOrderController'
-     // })
+    /*$locationProvider.html5Mode(false);
+    $locationProvider.hashPrefix('!');*/
 });

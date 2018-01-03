@@ -1,0 +1,145 @@
+<section ng-controller="CreateNonPoInvoiceController">
+	<div ng-init="getNoPoInvoiceLineData()">
+		<p style="font-family:Lato-Regular;font-size:24px;color:#4a4a4a;letter-spacing:0;text-align:left;">Submit Non-PO Invoice</p>
+		<div class="col-lg-12 col-md-12" style="border-width:1px;border-color:red;">
+			<div class="col-lg-4 col-md-4">
+				<label>Supplier ID:</label>
+				<input type="text" name="FirstName" placeholder="Supplier ID" class="form-control input-sm" style="height:35px;" ng-model="SupplierId">
+			</div>
+			<div class="col-lg-4 col-md-4">
+				<label>Supplier Name:</label>
+				<input type="text" name="LastName" placeholder="Supplier Name" class="form-control input-sm" style="height:35px" ng-model="PoSupplierID">
+			</div>
+			<div class="col-lg-4 col-md-4">
+				<label>Company:</label>
+				<input type="text" name="FirstName" placeholder="Company" class="form-control input-sm" style="height:35px" ng-model="Company">
+			</div>
+			<!-- <div class="col-lg-3 col-md-3 ">
+				<label>Currency</label>
+				<input type="text" name="FirstName" placeholder="Currency" class="form-control input-sm" style="height:35px;" ng-model="POStatus">
+			</div> -->
+	   </div>
+
+	  					<div class="col-lg-12 col-md-12">
+	  						<h4><u>Invoice Information</u></h4>
+	  						
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Invoice No:*</label>
+	  							<input type="text" name="FirstName" placeholder="Invoice No:*" class="form-control input-sm" style="height:35px;" ng-model="InvoiceNo">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Status:</label>
+	  							<input type="text" name="FirstName" placeholder="Status" class="form-control input-sm" style="height:35px;" ng-model="Status">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Currency:</label>
+	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="Currency">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Invoice Date:*</label>
+	  							<input type="date" name="LastName" placeholder="Invoice Date" class="form-control input-sm" style="height:35px" ng-model="InvoiceDate">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>CreateDate:*	</label>
+	  							<input type="date" name="LastName" placeholder="CreateDate" class="form-control input-sm" style="height:35px" ng-model="CreateDate">
+	  						</div>
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>UpdateDate:</label>
+	  							<input type="date" name="LastName" placeholder="UpdateDate" class="form-control input-sm" style="height:35px" ng-model="UpdateDate">
+	  						</div>
+	  						<div class="col-lg-8 col-md-8">
+								<label>Comments:</label>
+								<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="Note">
+							</div>
+	
+	  						<div class="col-lg-4 col-md-4">
+	  							<label>Invoice Amount:*</label>
+	  							<input type="text" name="LastName" placeholder="" class="form-control input-sm" style="height:35px" ng-model="InvoiceAmount">
+	  						</div>
+	  					</div>
+	  				<div class="col-md-12 col-lg-12">
+	  					
+	  					<div >
+	  						<h4><u>Invoice Line Items</u></h4>
+	  						<div class="" style="margin-top:1%">
+			  					<div id="grid1" ui-grid="gridOptions" ui-grid-pagination ui-grid-move-columns ui-grid-resize-columns ui-grid-move-columns ui-grid-empty-base-layer  ui-grid-pinning  class="myGrid"></div>
+			  				</div>
+	  						<div class="col-md-12 col-lg-12" ng-show="addNew" style="border:solid 2px #D6DBDF;margin-top:1%;">
+	  							<!-- <div class="col-lg-1 col-md-1">
+		  							<label>Line Id</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="LineId">
+	  						    </div> -->
+	  						    <div class="col-lg-2 col-md-2">
+		  							<label>Description *</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="Description">
+	  						    </div>
+	  						    <div class="col-lg-1 col-md-1">
+		  							<label>UMO</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="UMO">
+	  						    </div>
+	  						    <div class="col-lg-1 col-md-1">
+		  							<label>Quantity</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="Quantity">
+	  						    </div>
+	  						    <div class="col-lg-1 col-md-1" style="margin-right:5%;">
+		  							<label>Tax Type</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="TaxType">
+	  						    </div>
+	  						    <div class="col-lg-2 col-md-2" style="margin-left:-5%;">
+		  							<label>Tax Value</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="TaxValue">
+	  						    </div>
+	  						    <div class="col-lg-2 col-md-2">
+		  							<label>Unit Price*</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="UnitPrice">
+	  						    </div>
+	  						    <div class="col-lg-2 col-md-2">
+		  							<label>Invoice Line Amount</label>
+		  							<input type="text" name="FirstName" placeholder="" class="form-control input-sm" style="height:35px;" ng-model="InvoiceLineAmount">
+	  						    </div>
+	  						    <div>
+	  								<button style="float:right;margin:1%" ng-click="addNew=!addNew;SubmitInvoiceLineData();getNoPoInvoiceLineData()" >+ Add a Line Item</button>
+	  							</div>
+	  						</div>
+	  						<div><button ng-hide="addNew"  style="float:right;margin:1%" ng-click="addNew=!addNew">Add New Line</button>
+
+	  							<!-- <button ng-show="addNew" style="float:right;margin:1%" 
+	  							ng-click="addNewItem()" >+ Add a Line Item</button>
+	  							<button style="float:right;margin:1%">Load PO Lines</button> -->
+	  						</div>
+	  					</div>
+	  				</div>
+
+	  				<div class="col-lg-12 col-md-12">
+	  				<div class="col-md-6 col-lg-6" style="background: #EAEDED;padding-bottom:15px;">
+	  							<label ><span class="glyphicon glyphicon-open"></span> Upload document, image</label>
+	  							<div class="col-md-6 col-lg-6">
+	  								<input type="file" file-model="Data"/>
+	  							</div>
+	  							<div class="col-md-6 col-lg-6">
+	  								<button class="glyphicon glyphicon-open" ng-click="uploadFile()" style="margin-left: 30%;"> Upload Attachment</button>
+	  							</div>
+	  							<div class="col-md-8 col-lg-8">
+		  							<table style="border: 1px solid black;width:100%">
+		  								<tr style="border: 1px solid black;height:20px;" ng-repeat="name in pdfData">
+		  									<td style="text-align:left;border: 1px solid black;padding-left:10px;padding-right:10px">{{name.fileName}}<span class="glyphicon glyphicon-trash" style="float:right;vertical-align:middle;" ng-click="deletePdf(name.attachmentID)"></span>
+		  									<span class="glyphicon glyphicon-paperclip" style="float:right;vertical-align:middle;" ng-click="downloadPdf($index)"></span></td>
+		  								</tr>
+		  							</table>
+	  							</div>
+	  							<div class="col-md-4 col-lg-4" ng-show="lading">
+	  								<span class="glyphicon glyphicon-refresh fa-spin"></span>
+	  								Loading
+	  							</div>
+	  						</div>
+	  					
+	  				</div>
+	  				<div class="col-md-12 col-lg-12">
+	  					<button style="float:left;margin:1%" ng-click='SubmitInvoice()'>Submit Invoice</button>
+	  					<button style="float:left;margin:1%">Save as Draft</button>
+	  					<button style="float:left;margin:1%"><a href="#!/NonPOInvoices" style="color:black ">Cancel Invoice</a></button>
+	  					
+	  				</div>
+
+	</div>
+</section>

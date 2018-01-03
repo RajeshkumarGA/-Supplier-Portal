@@ -9,6 +9,9 @@ app.factory('sessionService',['$http',function($http){
 		},
 		destroy: function(key){
 			return sessionStorage.removeItem(key);
+		},
+		clear: function(){
+			return sessionStorage.clear();
 		}
 	}
 }])

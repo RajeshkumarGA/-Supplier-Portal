@@ -2,6 +2,40 @@
 body {
 	background-color:#fafbfc;
 }
+body:not(.modal-open){
+  padding-right: 0px !important;
+}
+.navbar
+{
+    -webkit-transform: translate3d(0,0,0);
+}
+.modal-open {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    overflow: auto;
+}
+.modal.fade {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    overflow: auto;
+}
+.page_heading{
+	"font-family:'Lato', sans-serif;
+	font-size:34px;
+	color:#4a4a4a;
+	letter-spacing:0;
+	text-align:left;
+}
+.navbar-fixed {
+  top: 0;
+  z-index: 100;
+  position: fixed;
+  width: 100%;
+}
 .navbar-custom {
     border-top: none;
     color:black;
@@ -55,7 +89,61 @@ ul.nav a:target{
 	width:100%;
 	background-color: black; 
 }
+.btn-custom-k{
+	height:30px;
+	background-color: #4CAF50;
+	font-family:'Lato', sans-serif;
+	border: none;
+	color:#ffffff;
+    padding-left:15px;
+    padding-right:15px;
+    /*padding: 15px 32px;*/
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+   /* margin: 8px 3px;*/
+    cursor: pointer;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    border-radius: 6px;
+}
 
+.btn-hide-inv
+{
+	height:30px;
+	text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    font-family:'Lato', sans-serif;
+	font-size:14px;
+	border-radius:6px;
+	letter-spacing:0;
+	border:solid #294874;
+	background:none;
+	float:right;
+	margin-right:5%;
+	cursor: pointer;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.btn-hide
+{
+	height:35px;
+	text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    font-family:'Lato', sans-serif;
+	font-size:14px;
+	border-radius:6px;
+	letter-spacing:0;
+	border:none;
+	background:none;
+	float:right;
+	margin-right:5%;
+	cursor: pointer;
+   
+}
 input[type=checkbox]{
 	margin-right: 2%;
 }
@@ -117,6 +205,10 @@ tr {
 .pagination {
     display: inline-block;
     margin-top: 0px;
+    font-family:'Lato', sans-serif;
+	font-size:13px;
+	color:#4a4a4a;
+	letter-spacing:0;
 }
 
 .pagination a {
@@ -181,8 +273,12 @@ tr {
 	text-align:left;
   }
   .InActive .ui-grid-cell{
-  background-color: #c7c00d !important;
-  border: .5px solid #e4e4e4;
+  background-color: #FADBD8 !important;
+  border: .5px solid #F4F6F6;
+}
+ .New .ui-grid-cell{
+  background-color: white !important;
+  border: .5px solid #F4F6F6;
 }
 
 .myGridDashboard {
@@ -206,7 +302,10 @@ tr {
 	}
 	
 } 
-
+.vl {
+    border-left: 3px solid white;
+   
+}
 @media only screen and (min-width:320px) and (max-width: 480px){
 	.loginForm{
 		background-color: #e4e4e4;
@@ -321,7 +420,7 @@ tr {
 }
 
 .pielegend{
-	margin-top:-35%;
+	margin-top:-38%;
 	margin-left:42%;
 	color:#fff;
 }
@@ -394,17 +493,7 @@ tr {
 	text-align:center;
 }
 
-.btn-hide
-{
-    position: relative;
-    font-family:'Lato', sans-serif;
-	font-size:14px;
-	letter-spacing:0;
-	border:none;
-	background:none;
-	float:right;
-	margin-right:5%;
-}
+
 
 .ui-grid .ui-grid-render-container-body .ui-grid-viewport {
   overflow-x: auto !important;
@@ -445,3 +534,73 @@ tr {
 	letter-spacing:0;
 	text-align:left;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    /*margin-right:-18%;*/
+    opacity: 1;
+    display: block;
+    background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;
+    width: 12px;
+    height: 12px;
+    border-width: thin;
+}
+
+select.cust {
+    background:url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right;
+    -webkit-appearance: none;
+    -mz-appearance: none;
+    margin-right:10px;
+}
+.dropdown.dropdown-scroll .dropdown-menu {
+  max-height: 200px;
+  width:100%;
+  border:none;
+  overflow: auto;
+}
+.search-control {
+  padding: ;
+}
+
+.selectdiv {
+  position: relative;
+  float:left;
+}
+
+.selectdiv:after {
+    content: '\f078';
+    font: normal normal normal 17px/1 FontAwesome;
+    color:#337ab7;
+    right: 3px;
+    top: 6px;
+    padding-left:5px;
+    height: 34px;
+    position: absolute;
+    pointer-events: none;
+}
+
+select::-ms-expand {
+display: none;
+}
+
+.selectdiv select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Add some styling */
+  border-color:#DBDDE1;  
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: 34px;
+  float: right;
+  padding-right:20px;
+  font-size: 16px;
+  font-family:'Lato', sans-serif;font-size:14px;color:#337ab7;
+  background-color: #ffffff;
+  background-image: none;
+  
+  -ms-word-break: normal;
+  word-break: normal;
+}
+

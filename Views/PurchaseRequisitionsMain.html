@@ -1,8 +1,8 @@
-  <link rel="styleSheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.css"/>
+ <!--  <link rel="styleSheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.7/ui-grid.css"/> -->
   <section ng-controller="PurchaseRequisitions" style="background-color: #fafbfc;">
   	<div class="controller">
 		  	<div class="row">
-			  	<div class="col-lg-10"><h3>Purchase Requisitions </h3></div>
+			  	<div class="col-lg-10"><p style="font-family:'Lato', sans-serif;font-size:24px;color:#4a4a4a;letter-spacing:0;text-align:left;">Purchase Requisitions </p></div>
 			  	<div class="col-lg-2" style="margin-top:1%;float:right;">
 			  	     <button ng-click="toggle = !toggle" class="btn-hide">
           					<span ng-show ="toggle" class="glyphicon glyphicon-eye-close" style="background:#294874;border-radius:2px;width:28px;height:28px;color:#fff;padding-top:5px;"></span>
@@ -11,24 +11,46 @@
         			</button>
 			  	</div>
 		  	</div>	    
-  			<div ng-show ="toggle" class="row" style="display:table;width:100%;background-color:#294874;opacity:0.5;margin-left:.2%" data-ng-init="renderCharts()">
+  			<div ng-show ="toggle" class="col-lg-12 col-md-12 col-sm-12" style="display:table;width:100%;background-color:#294874;opacity:0.5;margin-left:.2%">
   				<div class="col-lg-3 col-md-3 col-sm-12">
-  					<div class="chartheader">
+  					<div class="chartheader" style="margin-top:-1%">
   						Purchase Requisitions by Status
   					</div>
-  					<div  style="height:110px;width:110px;margin-top:4%;margin-left:0%;display: inline-block;">
-  						<canvas id="myPieChart"></canvas>
+  					<div class="col-md-6 col-lg-6" >
+              <div style="margin-left:-13%;">
+  						  <canvas id="myPieChart"></canvas>
+              </div>
   					</div>
-  					<div class="pielegend">
-                <p><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#bd10e0" /></svg>{{PieCancelledPer}}% PO Created [{{PieCancelled}}]</p>
-  							<p><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f8e71c" /></svg>{{PieActivePer}}% PLANNED [{{PieActive}}]</p>
-  							<p><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f5a800" /></svg>{{PieClosedPer}}% RELEASED [{{PieClosed}}]</p>
-  							
+  					<div class="col-md-6 col-lg-6">
+              <div style="color:#ffffff;margin-left:-15%;margin-right:-10%;margin-top:25%;">
+              <table style=" border: 1px solid white; width:115%;">
+                <tr style=" border: 1px solid white;">
+                  <td style=" border: 1px solid white;"><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#bd10e0" /></svg></td>
+                  <td style=" border: 1px solid white;">PO Created</td>
+                  <td style=" border: 1px solid white;">{{PieCancelled}}</td>
+                  <td style=" border: 1px solid white;">{{PieCancelledPer}}%</td>
+                </tr>
+                <tr style=" border: 1px solid white;background:none">
+                  <td style=" border: 1px solid white;"><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f8e71c" /></svg></td>
+                  <td style=" border: 1px solid white;">PLANNED</td>
+                  <td style=" border: 1px solid white;">{{PieActive}}</td>
+                  <td style=" border: 1px solid white;">{{PieActivePer}}%</td>
+                </tr>
+                 <tr style=" border: 1px solid white;">
+                  <td style=" border: 1px solid white;"><svg height="12" width="12"><circle cx="6" cy="6" r="6" fill="#f5a800" /></svg></td>
+                  <td style=" border: 1px solid white;">RELEASED</td>
+                  <td style=" border: 1px solid white;">{{PieClosed}}</td>
+                  <td style=" border: 1px solid white;">{{PieClosedPer}}%</td>
+                </tr>
+              </table>
+            </div>
+  						
   					</div>
   				</div>
-  				<div class="col-lg-9 col-md-6 col-sm-12" >
-  					<div class="chartheader">
-  						Month Over Month Distribution - 2017
+  				<div class="col-lg-9 col-md-6 col-sm-12" style="border-left:4px solid #ffffff;margin-left:3%;margin-right:-3%;margin-top:-1%;margin-bottom:-1%">
+            <!-- <div class="vl" style="margin-top:-1%; height:210px;margin-bottom:-210px"></div> -->
+  					<div class="chartheader" style="margin-top:1%;">
+  						Month Over Month Distribution - {{getYearVal}}
   					</div>
   					<div class="" >
   						<canvas id="myBarChart"></canvas>
@@ -42,31 +64,30 @@
   		
   		<div style="background-color: #fafbfc;margin:auto;">
   			<div class="row">
-  			<div class="col-md-4 col-lg-4 col-sm-12 ">
+  			<div class="col-md-5 col-lg-5 col-sm-12">
   				<ul class="pagination">
   					<li><a disabled class="filter_style" style="color:#4a4a4a;">PR State : </a></li>
   					<li id="POSTATUS_0" class="active" style="width:40px;"><a ng-click="filter(0)" class="filter_style">All</a></li>
             <li id="POSTATUS_3" class="" style="width:30px;"><a class="filter_style" ng-click="filter(3)">PO Created</a></li>
   					<li id="POSTATUS_1" class="" style="width:30px;"><a ng-click="filter(1)" class="filter_style">Planned</a></li>
-  					<li id="POSTATUS_2" class="" style="width:30px;"><a class="filter_style" ng-click="filter(2)">Released</a></li>
-  					
+  					<li id="POSTATUS_2" class="" style="width:30px;"><a class="filter_style" ng-click="filter(2)">Released</a></li>	
   				</ul>
   			</div>
-  			<div class="col-md-4 col-lg-4 col-sm-12">
+  			<div class="col-md-4 col-lg-4 col-sm-12" style="margin-left:-8%;padding:0%;padding-top:4px;margin-right:-10%;">
   				<ul class="pagination">
   					<li style="border-color:none;background-color:#fafbfc;color:#4a4a4a;"><a disabled class="filter_style" >Between</a></li>
-  					<li  class="" style="width:30px;"><input class="filter_style" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" placeholder="Requisition Date" ng-change="selectdate()" ng-model="requisitionDatesearch"></li>
-  					<li  class="" style="width:30px;"><input class="filter_style"  type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" placeholder="Latest Order Date" ng-change="selectdate()" ng-model="latestOrderDatesearch"></li>
+  					<li><input  style="height:34px;" type="text" placeholder="Start Date" ng-change="selectdate()" ng-model="requisitionDatesearch" onfocus="(this.type='date')"  onfocusout="(this.type='text')"></li>
+  					<li><input style="height:34px;" class="filter_style"  type="text" placeholder="End Date" ng-change="selectdate()" ng-model="requisitionDateEndsearch" onfocus="(this.type='date')"  onfocusout="(this.type='text')"></li>
   				</ul>
   			</div>
-  			<div class="col-md-3 col-lg-3 col-sm-12" style="margin-left: -6%;">
+  			<div class="col-md-3 col-lg-3 col-sm-12" style="margin-left: 4%;">
   				<ul class="pagination">
   				<li style="padding:0px">
   					<a data-toggle='modal' data-target='#CreateFilter' class="btn btn-default" style="border:none;background-color: #fafbfc;font-family: 'Lato', sans-serif;font-size:13px;color:#4a4a4a;letter-spacing:0;"><span class="glyphicon glyphicon-tasks"></span> Create Filter</a>
   				</li>
   				<li style="padding:0px">
   					<span class="glyphicon glyphicon-download-alt" style="border:none;background:none;display:inline;"></span>
-             <select style="display:inline;width:50%;margin-right:-5%;margin-top:2%;" ng-init="exports.value=0" ng-options="exports.id as exports.name for exports in exportArray" ng-model="exports.value" ng-change="update(exports.value)"></select>
+             <select style="display:inline;width:50%;margin-right:-8%;margin-top:2%;" ng-init="exports.value=0" ng-options="exports.id as exports.name for exports in exportArray" ng-model="exports.value" ng-change="update(exports.value)"></select>
   				</li>
   				</ul>
   			</div>
@@ -79,12 +100,12 @@
   			</div>
   			
   			<div class="col-lg-12">
-				<div class="col-md-4 col-lg-4 col-sm-12">
-					<input type="text" name="" placeholder="Search with Po Number, Order Status, Comapny,Buyer Name" ng-keyup="search()" class="form-control" style="width: 90%;margin-left:-4%;" ng-model="searchKeywords">
+				<div class="col-md-6 col-lg-6 col-sm-12">
+					<input type="text" name="" placeholder="Search by Requisitions No, Supplier Id, Order For ....." ng-keyup="search()" class="form-control" style="width: 90%;margin-left:-4%;" ng-model="searchKeywords">
 				</div>
-		        <div class="col-md-8 col-lg-8 col-sm-12">
+		        <!-- <div class="col-md-8 col-lg-8 col-sm-12">
 		          <button ng-click="dragGroupBy('supplierId','orderFor')">Group</button>
-		        </div>  	
+		        </div>  --> 	
   			</div>
   			<div class="col-md-12 col-lg-12 col-sm-12">
   				<div class="" style="margin-top:1%">
@@ -95,7 +116,7 @@
   		</div>
   	<div id="hideColumnModal" class="modal fade" role="dialog">
   		<div class="modal-dialog">
-  			<div class="modal-content" style="width:1100px;margin-left:-40%;">
+  			<div class="modal-content" style="width:190%;margin-left:-50%;">
   				<div class="modal-header">
   					<button type="button" class="close" data-dismiss="modal">&times;</button>
   					<h4 class="modal-title">Hide/Unhide Columns</h4>
@@ -129,28 +150,28 @@
   	</div>
 
     <div id="CreateFilter" class="modal fade" role="dialog">
-      <div class="modal-dialog" style="margin-left:20%;margin-top:10%;">
+      <div class="modal-dialog" style="margin-left:25%;margin-top:10%;">
         <div class="modal-content">
-          <div style="width:800px; background-color:#fff;">
+          <div style=" background-color:#fff;">
             <form>
             <div class="modal-header">
               <button style="background:blue;color:#fff ;width:20px;height:20px;border-radius:10px" type="button" class="close" data-dismiss="modal">&times;</button>
               <p class="Create-Filter-Modal-Title"><b>Create Filter</b></p>
             </div>
             <div class="modal-body">
-              <div class="popupCard" style="">
+              <div class="popupCard" style="width:400px;margin-left:12%;">
               <div class="row">
                <div style="display:inline;margin-left:8%;margin-top:2%;">
-                  <a class="popupCardHeader">Group 1</a>
-                  <p class="popupCardHeaderSub" style="margin-left:8%;">All conditions must be met.</p>
+                  <a class="popupCardHeader">All conditions must be met.</a>
+                  <!-- <p class="popupCardHeaderSub" style="margin-left:8%;">All conditions must be met.</p> -->
                </div>
                <div style="display:inline;">
-                  <select ng-options='condition for condition in conditions' ng-model='selectedCondition' class="btn btn-primary" style="width:80px;margin-top:-25%;margin-left:60%;height:30px; "></select>
+                  <select ng-options='condition for condition in conditions' ng-model='selectedCondition' class="btn btn-primary" style="width:100px;margin-top:-5%;margin-left:70%;height:30px; "></select>
                </div></div>
                <div >
-                 <select ng-options='selectcolmn.id as selectcolmn.title for selectcolmn in columnArray' ng-model='selectedColumn1' class="btn" placeholder="Choose Column" style="margin:2%;border-color:#B1B6B6;border-radius:5px;"></select>
-                  <select ng-options='selectcolmn.id as selectcolmn.title for selectcolmn in columnArray' ng-model='selectedColumn2' class="btn" placeholder="Choose Column" style="margin:2%;border-color:#B1B6B6;border-radius:5px;"></select>
-                  <input type="text" name="createFilterValue" placeholder="Write the Value for these filters" ng-model='createFilterValue' style="margin:2%;width:98%;border-color:#B1B6B6;border-radius:5px;" required>
+                 <select ng-options='selectcolmn.id as selectcolmn.title for selectcolmn in columnArray' ng-model='selectedColumn1' class="btn" placeholder="Choose Column" style="margin:2%;border-color:#B1B6B6;border-radius:5px;width:97%;"></select>
+                  <select ng-options='selectcolmn.id as selectcolmn.title for selectcolmn in columnArray' ng-model='selectedColumn2' class="btn" placeholder="Choose Column" style="margin:2%;border-color:#B1B6B6;border-radius:5px;width:97%;"></select>
+                  <input type="text" name="createFilterValue" placeholder="Write the Value for these filters" ng-model='createFilterValue' style="margin:2%;width:97%;border-color:#B1B6B6;border-radius:5px;height:30px;" required>
                </div>
             </div>
          

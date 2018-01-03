@@ -1,7 +1,29 @@
 app.controller('checkPaymentController', ['$scope','sessionService', '$rootScope','$http','$location', 'uiGridConstants','$templateCache', 'uiGridExporterService','uiGridExporterConstants',function ($scope,sessionService, $rootScope,$http,$location,uiGridConstants,$templateCache,uiGridExporterService,uiGridExporterConstants) {
- $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
-$rootScope.userName = sessionService.get('UserName'); 
-ifsSupplierID = sessionService.get('ifsSupplierNum');
+  $rootScope.UserloggedIn=sessionService.get('UserLoggedIn');
+  $rootScope.userName = sessionService.get('UserName');
+  if(sessionService.get('tempisPRSEnabled')=='true'){
+    $rootScope.IsPRSEnabled=true;
+    }
+    else{
+      $rootScope.IsPRSEnabled=false;
+    }
+    if(sessionService.get('tempisFISEnabled')=='true'){
+      $rootScope.isFISEnabled=true;
+    }
+    else{
+      $rootScope.isFISEnabled=false;
+      
+    }
+    if(sessionService.get('tempisSubmissionNonPOInvoiceEnabled')=='true'){
+      $rootScope.isSubmissionNonPOInvoiceEnabled=true;
+    }
+    else{
+      $rootScope.isSubmissionNonPOInvoiceEnabled=false;
+      
+    }
+ //$rootScope.IsPRSEnabled=sessionService.get('IsPRSEnabled'); 
+ ifsSupplierID =sessionService.get('ifsSupplierNum');
+ console.log(ifsSupplierID);
  tokenType = sessionService.get('TokenType');
  accessToken = sessionService.get('AccessToken');
  $scope.viewChange=function(getValue){
@@ -9,39 +31,40 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
     if(getValue==1) $location.path('/AutomaticPayment'); 
     if(getValue==2) $location.path('/CheckPayment');
 }
+
  $scope.dataset=[];
- URL = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/payments/getcheckpaymentsforsupplier/'+ifsSupplierID;
+ URL1 = 'http://khagawebbackendwebapi20171031062850.azurewebsites.net/api/payments/getcheckpaymentsforsupplier/'+ifsSupplierID;
  var Headers = tokenType+' '+accessToken;
+ console.log("in checkPaymentController");
+ console.log(URL);
  $http({
     method:'GET',
-    url: URL,
+    url: URL1,
     headers:{'Authorization':Headers}
  }).then(function(response){
+     console.log(response);
   
-    /*for (var i=0;i<response.data.length;i++){
+    for (var i=0;i<response.data.length;i++){
+       $scope.Payment_Date=response.data[i].printDate.split('T');
     var obj={
-      "Company":response.data[i].Company , 
-      "Invoice_NO":response.data[i].voucheR_NO,   
-      "PO_No":response.data[i].voucheR_NO, 
-      "Pay_Reference":'NA', 
-      "Invoice_Due_Date":"NA", 
-      "Pay_Date":response.data[i].payDate,    
-      "Invoice_Amount":response.data[i].voucheR_NO, 
-      "Paid_Amount":response.data[i].voucheR_NO,   
-      "Discount_Amount":response.data[i].voucheR_NO,    
-      "Payment_Amount":,    
-      "Open_Amount":0,    
-      "Check_NO":161050,
-      "Check_Amount":1216.88, 
-      "Status":"Cashed",  
-      "Currency":"USD",   
-      "Payment_ID":145105,
-      "Check_Print_Date":"2017-7-16",    
-      "Check_Void_Date":"",   
-      "Check_Clear_Date":"2017-7-16"
+      "Payment_ID":response.data[i].paymentId,
+      "Supplier_Id":response.data[i].supplierId,
+      "Supplier_Name":response.data[i].name,
+      "Company":response.data[i].company , 
+      "Check_NO":response.data[i].checkId,
+      "Check_Amount":response.data[i].checkAmount,
+      "CashCheckAmount":response.data[i].cashCheckAmount,
+      "Check_Status":response.data[i].objState,
+      "Print_Date":response.data[i].printDate,
+      "clearDate":response.data[i].clearDate,
+      "ledgerItemSeriesId":response.data[i].ledgerItemSeriesId,   
+
     }
     $scope.dataset.push(obj);
-  }*/
+  }
+  dateChart($scope.dataset);
+  $scope.linesPerPage = sessionService.get("linesPerPage")
+  $scope.gridOptions.paginationPageSize = parseInt($scope.linesPerPage);
 })
 
   var today = new Date();
@@ -84,116 +107,223 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
     }
   };
   $scope.gridOptions = {
-    // enableHorizontalScrollbar : uiGridConstants.scrollbars.NEVER,
-    // enableVerticalScrollbar   : uiGridConstants.scrollbars.NEVER,
-    // enableHorizontalScrollbar:0;
+    
     enableFiltering: true,
     onRegisterApi: function(gridApi){
       $scope.gridApi = gridApi;
     },
-    paginationPageSizes: [10,20,75],
-    paginationPageSize: 10,
+    paginationPageSizes: [20,50,100],
+    enablePinning:false,
     columnDefs: [
        
-        { field: 'Company',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:true,displayName: "Company", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Invoice_NO',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:true,displayName: "Invoice NO", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'PO_No',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:true,displayName: "PO No", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Pay_Reference',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Pay Reference", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Invoice_Due_Date',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Invoice Due Date", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Pay_Date',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Pay Date", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Invoice_Amount',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Invoice Amount", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Paid_Amount',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Paid Amount", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Discount_Amount',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Discount Amount ", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Payment_Amount',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Payment Amount", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Open_Amount',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Open Amount", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Check_NO',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check NO", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Check_Amount',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check Amount", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Status',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Status", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Currency',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Currency", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Payment_ID',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Payment ID", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Check_Print_Date',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check Print Date   ", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Check_Void_Date',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check Void Date", headerCellClass: $scope.highlightFilteredHeader,},
-        { field: 'Check_Clear_Date',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check Clear Date", headerCellClass: $scope.highlightFilteredHeader,}
-        
-],
+        { field: 'Payment_ID',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:true,displayName: "Payment ID",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader,
+           filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
 
+      },
+        { field: 'Supplier_Id',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:true,displayName: "Supplier Id",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'Supplier_Name',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:true,displayName: "Supplier Name",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'Company',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Company",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'Check_NO',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check NO",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'Check_Amount', cellFilter: 'currency:"USD " :2',  minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check Amount", groupingShowAggregationMenu: false,enableHiding:false,headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'CashCheckAmount',cellFilter: 'currency:"USD " :2',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Cash Check Amount",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'Check_Status',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Check Status",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'Print_Date', type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'',  minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Print Date",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'clearDate',  type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'', minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Clear Date",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+        { field: 'ledgerItemSeriesId',   minWidth:130, width:130, enableColumnResizing: false, pinnedLeft:false,displayName: "Ledger Item SeriesId",groupingShowAggregationMenu: false,enableHiding:false, headerCellClass: $scope.highlightFilteredHeader, filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-filter></div></div>',
+        filter: {term: '',condition: uiGridConstants.filter.STARTS_WITH,
+                 options:[{index:6},[ {id: uiGridConstants.filter.STARTS_WITH, value: 'Begins with'}, {id: uiGridConstants.filter.CONTAINS, value: 'Contains'},{id: uiGridConstants.filter.ENDS_WITH, value: 'Ends With'},{id: uiGridConstants.filter.EXACT, value: 'Equals'},{id: uiGridConstants.filter.NOT_EQUAL, value: "Doesn't Equals"}]]      // custom attribute that goes with custom directive above 
+        }
+      },
+       
+],
+      exporterCsvFilename: 'CheckPayment.csv',
       onRegisterApi: function(gridApi){
         $scope.gridApi = gridApi;
       }
     };
 
-  /*$http.get('/data/500_complex.json')
-    .success(function(data) {
-      $scope.gridOptions.data = data;
-      $scope.gridOptions.data[0].age = -5;
- 
-      data.forEach( function addDates( row, index ){
-        row.mixedDate = new Date();
-        row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
-        row.gender = row.gender==='male' ? '1' : '2';
-      });
-    });
-    */
     $scope.columnArray=[
-        /*{'id':0,'title':'Pay Reference','value':false},   
-        {'id':1,'title':'Invoice Due Date','value':false},    
-        {'id':2,'title':'Pay Date','value':false},    
-        {'id':3,'title':'Invoice Amount','value':false},  
-        {'id':4,'title':'Paid Amount','value':false}, 
-        {'id':5,'title':'Discount Amount','value':false}, 
-        {'id':6,'title':'Payment Amount','value':false},  
-        {'id':7,'title':'Open Amount','value':false}, 
-        {'id':8,'title':'Check NO ','value':false},   
-        {'id':9,'title':'Check Amount','value':false},    
-        {'id':10,'title':'Status','value':false},  
-        {'id':11,'title':' Currency','value':false},    
-        {'id':12,'title':'Payment ID','value':false},  
-        {'id':13,'title':'Check Print Date','value':false},    
-        {'id':14,'title':'Check Void Date','value':false}, 
-        {'id':15,'title':'Check Clear Date','value':false}*/
-        {id:0,title:'Payment ID',value:false},
-      {id:1,title:'Company',value:false},
-      {id:2,title:'Payment Date',value:false},
-      {id:3,title:'Series ID',value:false},
-      {id:4,title:'Currency',value:false},
-      {id:5,title:'Payment Amount',value:false},
-      {id:6,title:'Payment Method',value:false},
-      {id:7,title:'Bank Fee',value:false},
-      {id:8,title:'Paid Amount in Paid Currency',value:false},
-      {id:9,title:'Paid Amount in Acc Currency',value:false}
+       
+        // {id:0,title:'Payment ID',value:false},
+        // {id:1,title:'Supplier Id',value:false},
+        // {id:2,title:'Supplier Name',value:false},
+       
+        {id:0,title:'Company',value:false},
+        {id:1,title:'Check NO',value:false},
+        {id:2,title:'Check Amount',value:false},
+        {id:3,title:'Cash Check Amount',value:false},
+        {id:4,title:'Check Status',value:false},
+        {id:5,title:'Print Date',value:false},
+        {id:6,title:'Clear Date',value:false},
+        {id:7,title:'Ledger Item SeriesId',value:false}
     ];
-    $scope.hideColumn=function(){
-      for(var i=0;i<$scope.columnArray.length;i++){
-        if($scope.columnArray[i].value){
-          $scope.gridOptions.columnDefs[i].visible = false;
+
+    $scope.selectdate=function(){
+    $scope.fdate= new Date($scope.requisitionDatesearch);
+    $scope.edate= new Date($scope.requisitionDateEndsearch);
+    $scope.workingDatabase=[];
+    if($scope.requisitionDatesearch && $scope.requisitionDateEndsearch){
+      
+      var date;
+      for(var i=0;i<$scope.dataset.length;i++){
+         date = new Date($scope.dataset[i].Print_Date);
+        if($scope.fdate-date<=0 && $scope.edate-date>=0 )
+          $scope.workingDatabase.push($scope.dataset[i]);
+        
+        }
+        data($scope.workingDatabase);
       }
       else{
-        $scope.gridOptions.columnDefs[i].visible = true;
-        
-      }
 
+         if($scope.requisitionDatesearch){
+           
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Print_Date);
+               if($scope.fdate-date<=0){
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            data($scope.workingDatabase);
+
+      }
+      else{
+          if($scope.requisitionDateEndsearch){
+            
+            var date;
+            for(var i=0;i<$scope.dataset.length;i++){
+               date = new Date($scope.dataset[i].Print_Date);
+               if($scope.edate-date>=0){
+                console.log('in');
+                  $scope.workingDatabase.push($scope.dataset[i]);
+               }
+            }
+            console.log($scope.workingDatabase);
+            
+
+           }
+
+           data($scope.workingDatabase);
+      }
+     
     }
-    $scope.gridApi.core.refresh();
-  // $scope.gridApi.gridOptions.refresh();
+    
+    if(!$scope.requisitionDatesearch && ! $scope.latestOrderDatesearch){
+      
+      $scope.workingDatabase=$scope.dataset;
+      data($scope.workingDatabase);
+    }
   }
+  
   $scope.resetAllColumns = function(){
     for(var i=0;i<$scope.columnArray.length;i++){
-          $scope.gridOptions.columnDefs[i+3].visible = true;
-
-      }
-       $scope.gridApi.core.refresh();
-
+      $scope.gridOptions.columnDefs[i+3].visible = true;
+      $scope.columnArray[i].value=false;
+    }
+    $scope.gridApi.core.refresh();
   }
-  $scope.export = function(){
-    if (true) {
-      var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
-      $scope.gridApi.exporter.csvExport('all','all', myElement );
-    } else if ($scope.export_format == 'pdf') {
-      $scope.gridApi.exporter.pdfExport( $scope.export_row_type, $scope.export_column_type );
-    };
+  
+  $scope.hideColumn=function(){
+    for(var i=0;i<$scope.columnArray.length;i++){
+      if($scope.columnArray[i].value){
+        $scope.gridOptions.columnDefs[i+3].visible = false;
+      }
+      else{
+        $scope.gridOptions.columnDefs[i+3].visible = true;
+      }
+    }
+    $scope.gridApi.core.refresh();
+  }
+  $scope.conditions=['OR','AND'];
+  $scope.selectedCondition='OR';
+  $scope.selectedColumn1=0;
+  $scope.selectedColumn2=1;
+  if(!$scope.createFilterValue) $scope.error=true;
+  else $scope.error=false;
+  $scope.createFilterReset = function(){
+    $scope.workingDatabase=[];
+    $scope.selectedColumn1 = 0;
+    $scope.selectedColumn2 = 0;
+    $scope.selectedCondition='OR';
+    $scope.createFilterValue='';
+    $scope.workingDatabase=$scope.dataset;
+    data($scope.workingDatabase);
+  }
+  $scope.createFilterApply = function(){
+    $scope.workingDatabase=[];
+    selectedIndex1=parseInt($scope.selectedColumn1)+3;
+    selectedIndex2=parseInt($scope.selectedColumn2)+3;
+     selectedcol1 = $scope.gridOptions.columnDefs[selectedIndex1].field;
+     selectedcol2 =$scope.gridOptions.columnDefs[selectedIndex2].field;
+    if($scope.selectedCondition=='OR'){
+      for(var i=0;i<$scope.dataset.length;i++){
+        if($scope.dataset[i][selectedcol1] == $scope.createFilterValue ||   $scope.dataset[i][selectedcol2] ==$scope.createFilterValue) {
+            $scope.workingDatabase.push($scope.dataset[i]);
+        }   
+      }
+      data($scope.workingDatabase);
+    }
+    else{
+      for(var i=0;i<$scope.dataset.length;i++){
+        if($scope.dataset[i][selectedcol1]==$scope.createFilterValue && $scope.dataset[i][selectedcol2]==$scope.createFilterValue) {
+            $scope.workingDatabase.push($scope.dataset[i]);
+        }   
+      }
+      data($scope.workingDatabase);
+    }
+  }
+  $scope.exportArray=[{id:0,name:'Select Export'},{id:1,name:'Export as CSV'},{id:2,name:'Visible Export as CSV'}];
+  $scope.update = function(getId){
+    if(getId==0){}
+    if(getId==1){ $scope.export();}
+    if(getId==2){ $scope.exportVisible();}
+  }
+  $scope.export = function() {
+    var grid = $scope.gridApi.grid;
+    var rowTypes = uiGridExporterConstants.ALL;
+    var colTypes = uiGridExporterConstants.ALL;
+    uiGridExporterService.csvExport(grid, rowTypes, colTypes);
   };
-
- $scope.exportVisible = function() {
+  $scope.exportVisible = function() {
     var exportData = [];
     var exportColumnHeaders = $scope.gridOptions.showHeader ? uiGridExporterService.getColumnHeaders($scope.gridApi.grid, uiGridExporterConstants.VISIBLE) : [];
     angular.forEach($scope.gridApi.grid.rows, function(row) {
@@ -212,145 +342,114 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
     uiGridExporterService.downloadFile($scope.gridOptions.exporterCsvFilename, csvContent, $scope.gridOptions.exporterOlderExcelCompatibility);
   };
 
+  $scope.selectDateByDays=function(getdays){
+    $scope.workingDatabase=[];
+    if(getdays==7){
+      angular.element( document.querySelector('#POSTATUS_0')).addClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+      $scope.workingDatabase=$scope.dataset;
+      
+    }else if(getdays==30){
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).addClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).removeClass('active');
+    }else if(getdays==90){
+      angular.element( document.querySelector('#POSTATUS_0')).removeClass('active'); 
+      angular.element( document.querySelector('#POSTATUS_1')).removeClass('active');
+      angular.element( document.querySelector('#POSTATUS_2')).addClass('active');
+    }
+    if(getdays>7){
+       var today = new Date();
+              var nextWeek = new Date();
+              nextWeek.setDate(nextWeek.getDate() - getdays);
+             
+               $scope.fdate =new Date(nextWeek);
+               $scope.edate= today;
+              
+              var date;
+              for(var i=0;i<$scope.dataset.length;i++){
+                date = new Date($scope.dataset[i].Print_Date);
+                if($scope.fdate.getFullYear()<=date.getFullYear()){
+                  if($scope.fdate.getMonth()<date.getMonth() ){
+                    $scope.workingDatabase.push($scope.dataset[i]);
+                  }
+                  else if($scope.fdate.getMonth()==date.getMonth()){
+                    if($scope.fdate.getDate()<=date.getDate()){
+                  $scope.workingDatabase.push($scope.dataset[i]);
+                    }
+
+                  }
+
+                }
+              }
+
+    }
+             
+              data($scope.workingDatabase);
+            
+        }
 
   data($scope.dataset);
   function data(data) {
+    $scope.dateBarChart=[];
     $scope.gridOptions.data = data;
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.fromdate = new Date(val.Pay_Date);
+  }
+  function dateChart(data){
+     _.forEach(data, function (val) {
+       var date_chart=new Date(val.Print_Date);
+
+      $scope.dateBarChart.push({year:date_chart.getFullYear(),month:date_chart.getMonth()});
     });
-    _.forEach($scope.gridOptions.data, function (val) {
-      val.enddate = new Date(val.Pay_Date);
-    });
-
-  }
-
-  $scope.filter = function(getValue){
-    var myE0 = angular.element( document.querySelector( '.active' ) );
-    myE0.removeClass('active');
-    var myEl = angular.element( document.querySelector( '#POSTATUS_'+getValue) );
-    myEl.addClass('active');
-    $scope.workingDatabase=$scope.dataset;
-    switch (getValue){
-      case 0:
-      data($scope.workingDatabase);
-      break;
-      case 1:
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Cashed')
-          $scope.workingDatabase.push($scope.dataset[i]);
-
-      }
-      data($scope.workingDatabase);
-      break;
-      case 2:
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Printed')
-          $scope.workingDatabase.push($scope.dataset[i]);
-
-      }
-      data($scope.workingDatabase);
-      break;
-      case 3:
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
-          $scope.workingDatabase.push($scope.dataset[i]);
-
-      }
-      data($scope.workingDatabase);
-      break;
-
-    }
-  }
-  $scope.selectdate=function(){
-    $scope.fdate= new Date($scope.fromdatesearch);
-    $scope.edate= new Date($scope.enddatesearch);
-    if($scope.fromdatesearch && $scope.enddatesearch){
-      $scope.workingDatabase=[];
-     /* var fdate= new Date($scope.fromdatesearch);
-      if(fdate.getMonth()+1>=10){
-        strFDate=fdate.getFullYear()+'-'+parseInt(fdate.getMonth()+1)+'-'+fdate.getDate();
-      }
-      else{
-        strFDate=fdate.getFullYear()+'-0'+parseInt(fdate.getMonth()+1)+'-'+fdate.getDate();
-      }
-      var edate= new Date($scope.enddatesearch);
-      if(edate.getMonth()+1>=10){
-        strEDate=edate.getFullYear()+'-'+parseInt(edate.getMonth()+1)+'-'+edate.getDate();
-      }
-      else{
-        strEDate=edate.getFullYear()+'-0'+parseInt(edate.getMonth()+1)+'-'+edate.getDate();
-      }
-      console.log(strEDate);
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].fromdate.getMonth()+1>=10){
-          datasetFromdate=$scope.dataset[i].fromdate.getFullYear()+'-'+parseInt($scope.dataset[i].fromdate.getMonth()+1)+'-'+$scope.dataset[i].fromdate.getDate();
-        }
-        else{
-          datasetFromdate=$scope.dataset[i].fromdate.getFullYear()+'-'+parseInt($scope.dataset[i].fromdate.getMonth()+1)+'-'+$scope.dataset[i].fromdate.getDate();
-        }
-        if($scope.dataset[i].enddate.getMonth()+1>=10){
-          datasetEnddate=$scope.dataset[i].enddate.getFullYear()+'-'+parseInt($scope.dataset[i].enddate.getMonth()+1)+'-'+$scope.dataset[i].enddate.getDate();
-        }
-        else{
-          datasetEnddate=$scope.dataset[i].enddate.getFullYear()+'-'+parseInt($scope.dataset[i].enddate.getMonth()+1)+'-'+$scope.dataset[i].enddate.getDate();
-        }
-        if(datasetFromdate.match(strFDate) && datasetEnddate.match(strEDate) ){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }*/
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].fromdate.getDate() && $scope.fdate.getMonth()-1<=$scope.dataset[i].fromdate.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].fromdate.getFullYear() && $scope.edate.getDate()>=$scope.dataset[i].enddate.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].enddate.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].enddate.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-      data($scope.workingDatabase);
-    }
-  else{
-    if($scope.fromdatesearch) {
-      $scope.workingDatabase=[];
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.fdate.getDate()<=$scope.dataset[i].fromdate.getDate() && $scope.fdate.getMonth()<=$scope.dataset[i].fromdate.getMonth() && $scope.fdate.getFullYear()<=$scope.dataset[i].fromdate.getFullYear()){
-          $scope.workingDatabase.push($scope.dataset[i]);
+      var thisYear = new Date();
+    // console.log("year is ");
+    // console.log(thisYear.getFullYear());
+    $scope.dateBarChartCount=[0,0,0,0,0,0,0,0,0,0,0,0];
+    for (var i=0;i<$scope.dateBarChart.length;i++){
+      if($scope.dateBarChart[i].year == thisYear.getFullYear() ){
+        var month = $scope.dateBarChart[i].month;
+        switch (month+1) {
+          case 1:
+          $scope.dateBarChartCount[0]++;
+          console.log(month);
+          break;
+          case 2:
+          $scope.dateBarChartCount[1]++;
+          break;
+          case 3:
+          $scope.dateBarChartCount[2]++;
+          break;
+          case 4:
+          $scope.dateBarChartCount[3]++;
+          break;
+          case 5:
+          $scope.dateBarChartCount[4]++;
+          break;
+          case 6:
+          $scope.dateBarChartCount[5]++;
+          break;
+          case 7:
+          $scope.dateBarChartCount[6]++;
+          break;
+          case 8:
+          $scope.dateBarChartCount[7]++;
+          break;
+          case 9:
+          $scope.dateBarChartCount[8]++;
+          break;
+          case 10:
+          $scope.dateBarChartCount[9]++;
+          break;
+          case 11:
+          $scope.dateBarChartCount[10]++;
+          break;
+          case 12:
+          $scope.dateBarChartCount[11]++;
+          break;
         }
       }
     }
-    else{
-      for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.edate.getDate()>=$scope.dataset[i].enddate.getDate() && $scope.edate.getMonth()>=$scope.dataset[i].enddate.getMonth() && $scope.edate.getFullYear()>=$scope.dataset[i].enddate.getFullYear()){
-           $scope.workingDatabase.push($scope.dataset[i]);
-        }
-      }
-    }
-   /* var date= new Date($scope.fromdatesearch);
-    if(date.getMonth()+1>=10){
-      strFDate=date.getFullYear()+'-'+parseInt(date.getMonth()+1)+'-'+date.getDate();
-    }
-    else{
-      strFDate=date.getFullYear()+'-0'+parseInt(date.getMonth()+1)+'-'+date.getDate();
-    }
-    for(var i=0;i<$scope.dataset.length;i++){
-      if($scope.dataset[i].fromdate.getMonth()+1>=10){
-        datasetFromdate=$scope.dataset[i].fromdate.getFullYear()+'-'+parseInt($scope.dataset[i].fromdate.getMonth()+1)+'-'+$scope.dataset[i].fromdate.getDate();
-      }
-      else{
-        datasetFromdate=$scope.dataset[i].fromdate.getFullYear()+'-'+parseInt($scope.dataset[i].fromdate.getMonth()+1)+'-'+$scope.dataset[i].fromdate.getDate();
-      }
-      if(datasetFromdate.match(strFDate)){
-        $scope.workingDatabase.push($scope.dataset[i]);
-      }
-    }*/
-    data($scope.workingDatabase);
-
-  }
-    if(!$scope.fromdatesearch && ! $scope.enddatesearch){
-      $scope.workingDatabase=[];
-      $scope.workingDatabase=$scope.dataset;
-      data($scope.workingDatabase);
-    }
+   $scope.renderBarChart();
   }
  
     //If DIV is visible it will be hidden and vice versa.
@@ -359,85 +458,10 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
         $scope.toggleText = $scope.toggle ? 'Hide Widget' : 'Show Widget';
 
     })
-  $scope.pieData=[];
-  $scope.renderCharts = function(){
-    $scope.renderPieChart();
-    $scope.renderBarChart();
-    
-   
-    var count = 0;
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Planned')
-          count++;
-      }
-      $scope.PieActive = count;
-      $scope.pieData.push(count);
-
-    var count1 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Closed')
-          count1++;
-      }
-       $scope.PieClosed = count1;
-       $scope.pieData.push(count1);
-
-    var count2 = 0
-    for(var i=0;i<$scope.dataset.length;i++){
-        if($scope.dataset[i].Status=='Released')
-          count2++;
-      }
-      $scope.PieCancelled = count2;
-      $scope.pieData.push(count2);
-
-      var t = count+count1+count2;
-      $scope.PieActivePer = ((count*100)/t).toFixed(0);
-      $scope.PieClosedPer = ((count1*100)/t).toFixed(0);
-      $scope.PieCancelledPer = ((count2*100)/t).toFixed(0);
-      // console.log("pie Data is");
-      // console.log($scope.pieData[0]);
-
-  }
-
-  $scope.renderPieChart = function(){
-     var PieTotal = parseInt($scope.PieActive) + parseInt($scope.PieClosed) + parseInt($scope.PieCancelled);
-     console.log(PieTotal);
-     // $scope.PieActivePer = ((33*100)/(33+231+44)).toFixed(0);
-     // $scope.PieClosedPer = ((231*100)/(33+231+44)).toFixed(0);
-     // $scope.PieCancelledPer = ((44*100)/(33+231+44)).toFixed(0);
-      var data = {datasets: [{data: [33,231,44],
-        backgroundColor: ["#f8e71c","#f5a800","#bd10e0"]}],
-        labels: ["Active","Closed","Current"],
-      };
-      var canvas = document.getElementById("myPieChart");
-      var ctx = canvas.getContext("2d");
-      var myNewChart = new Chart(ctx, {
-        type: 'pie',
-        data: data,
-        options:{legend:{display:false,
-                         position:"right",
-                          labels:{              
-                                  boxWidth:10,
-                                }
-                         
-                        },
-                },
-
-      });
-      $scope.addOnClickOnPie = function(evt) {
-        var activePoints = myNewChart.getElementsAtEvent(evt);
-        if (activePoints[0]) {
-          var chartData = activePoints[0]['_chart'].config.data;
-          var idx = activePoints[0]['_index'];
-          var label = chartData.labels[idx];
-          var value = chartData.datasets[0].data[idx];
-          var url = "http://example.com/?label=" + label + "&value=" + value;
-         $scope.pievalue = idx;
-       }
-     };
-   }
+  
 
    $scope.renderBarChart = function() {
-   $scope.val = [44,11,22,33,55,33,11,22,44,33,0,0];
+   $scope.val = $scope.dateBarChartCount;
     console.log($scope.val);
     var data = {labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     datasets: [{
@@ -450,8 +474,8 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
  };
  var canvas = document.getElementById("myBarChart");
       var ctx = canvas.getContext("2d");
-      canvas.style.width = "300px";
-      canvas.style.height = "50px";
+      // canvas.style.width = "300px";
+      // canvas.style.height = "50px";
       var myNewChart = new Chart(ctx, {
         type: 'bar',
         data: data,
@@ -494,73 +518,37 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
       };
     }
 
-  
     $scope.search=function(){
       if($scope.searchKeywords){
         var strSearchKeywords=$scope.searchKeywords.toString();
         $scope.workingDatabase=[];
         for(var i=0;i<$scope.dataset.length;i++){
-                // var strSupplier_Id = $scope.dataset[i].Supplier_Id.toString();
-               /* var strCompany = $scope.dataset[i].Company.toString();
-                var strInvoice_NO = $scope.dataset[i].Invoice_NO.toString();
-                var strPO_No = $scope.dataset[i].PO_No.toString();
-                var strPay_Reference = $scope.dataset[i].Pay_Reference.toString();
-                var strInvoice_Due_Date = $scope.dataset[i].Invoice_Due_Date.toString();
-                var strPay_Date = $scope.dataset[i].Pay_Date.toString();
-                var strInvoice_Amount = $scope.dataset[i].Invoice_Amount.toString();
-                var strPaid_Amount = $scope.dataset[i].Paid_Amount.toString();
-                var strDiscount_Amount = $scope.dataset[i].Discount_Amount.toString();
-                var strPayment_Amount = $scope.dataset[i].Payment_Amount.toString();
-                var strOpen_Amount = $scope.dataset[i].Open_Amount.toString();
+             
+                var strPayment_ID = $scope.dataset[i].Payment_ID.toString();
+                var strSupplier_Id = $scope.dataset[i].Supplier_Id.toString();
+                var strSupplier_Name = $scope.dataset[i].Supplier_Name.toString();
+                var strCompany = $scope.dataset[i].Company.toString();
                 var strCheck_NO = $scope.dataset[i].Check_NO.toString();
                 var strCheck_Amount = $scope.dataset[i].Check_Amount.toString();
-                var strStatus = $scope.dataset[i].Status.toString();
-                var strCurrency = $scope.dataset[i].Currency.toString();
-                var strPayment_ID = $scope.dataset[i].Payment_ID.toString();
-                var strCheck_Print_Date = $scope.dataset[i].Check_Print_Date.toString();
-                var strCheck_Void_Date = $scope.dataset[i].Check_Void_Date.toString();
-                var strCheck_Clear_Date = $scope.dataset[i].Check_Clear_Date.toString();*/
-                var strPayment_ID = $scope.dataset[i].Payment_ID.toString();
-                var strCompany = $scope.dataset[i].Company.toString();
-                var strPayment_Date = $scope.dataset[i].Payment_Date.toString();
-                var strSeries_ID = $scope.dataset[i].Series_ID.toString();
-                var strCurrency = $scope.dataset[i].Currency.toString();
-                var strPayment_Amount = $scope.dataset[i].Payment_Amount.toString();
-                var strPayment_Method = $scope.dataset[i].Payment_Method.toString();
-                var strBank_Fee = $scope.dataset[i].Bank_Fee.toString();
-                var strPaid_Amount_in_Paid_Currency = $scope.dataset[i].Paid_Amount_in_Paid_Currency.toString();
-                var strPaid_Amount_in_Acc_Currency = $scope.dataset[i].Paid_Amount_in_Acc_Currency.toString();
+                var strCashCheckAmount = $scope.dataset[i].CashCheckAmount.toString();
+                var strCheck_Status = $scope.dataset[i].Check_Status.toString();
+                var strPrint_Date = $scope.dataset[i].Print_Date.toString();
+                // var strclearDate = $scope.dataset[i].clearDate.toString();
+                var strledgerItemSeriesId = $scope.dataset[i].ledgerItemSeriesId.toString();
             
           if(
-               /* strCompany.match(strSearchKeywords) ||   
-                strInvoice_NO.match(strSearchKeywords) ||   
-                strPO_No.match(strSearchKeywords) ||   
-                strPay_Reference.match(strSearchKeywords) ||    
-                strInvoice_Due_Date .match(strSearchKeywords) ||
-                strPay_Date.match(strSearchKeywords) || 
-                strInvoice_Amount.match(strSearchKeywords) ||   
-                strPaid_Amount.match(strSearchKeywords) ||  
-                strDiscount_Amount.match(strSearchKeywords) ||  
-                strPayment_Amount.match(strSearchKeywords) ||   
-                strOpen_Amount.match(strSearchKeywords) ||  
-                strCheck_NO.match(strSearchKeywords) || 
-                strCheck_Amount.match(strSearchKeywords) || 
-                strStatus.match(strSearchKeywords) ||   
-                strCurrency.match(strSearchKeywords) || 
-                strPayment_ID.match(strSearchKeywords) ||   
-                strCheck_Print_Date.match(strSearchKeywords) || 
-                strCheck_Void_Date.match(strSearchKeywords) ||  
-                strCheck_Clear_Date.match(strSearchKeywords)*/
+              
                   strPayment_ID.match(strSearchKeywords) ||
-                  strCompany.match(strSearchKeywords)  ||
-                  strPayment_Date.match(strSearchKeywords) ||
-                  strSeries_ID.match(strSearchKeywords) ||
-                  strCurrency.match(strSearchKeywords) ||
-                  strPayment_Amount.match(strSearchKeywords) ||
-                  strPayment_Method.match(strSearchKeywords) ||
-                  strBank_Fee.match(strSearchKeywords) ||
-                  strPaid_Amount_in_Paid_Currency.match(strSearchKeywords) ||
-                  strPaid_Amount_in_Acc_Currency.match(strSearchKeywords)
+                  strSupplier_Id.match(strSearchKeywords)  ||
+                  strSupplier_Name.match(strSearchKeywords) ||
+                  strCompany.match(strSearchKeywords) ||
+                  strCheck_NO.match(strSearchKeywords) ||
+                  strCheck_Amount.match(strSearchKeywords) ||
+                  strCashCheckAmount.match(strSearchKeywords) ||
+                  strCheck_Status.match(strSearchKeywords) ||
+                  strPrint_Date.match(strSearchKeywords) ||
+                  // strclearDate.match(strSearchKeywords) ||
+                  strledgerItemSeriesId.match(strSearchKeywords)
                 )
 
           {
@@ -576,19 +564,4 @@ ifsSupplierID = sessionService.get('ifsSupplierNum');
     }
 
   }])
-.filter('mapGender', function() {
-  var genderHash = {
-    1: 'male',
-    2: 'female'
-  };
-
-  return function(input) {
-    if (!input){
-      return '';
-    } else {
-      return genderHash[input];
-    }
-  };
-
-});
 
